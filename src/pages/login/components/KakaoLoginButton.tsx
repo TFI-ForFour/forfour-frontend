@@ -2,7 +2,7 @@ const KakaoLoginButton = () => {
   return (
     <button
       type="button"
-      className="w-full max-w-[320px] h-12 mx-auto bg-[#FEE500] rounded-[12px] flex justify-center items-center gap-2 active:opacity-90 px-2"
+      className="w-full max-w-[320px] h-12 mx-auto bg-[#FEE500] rounded-xl flex justify-center items-center gap-2 active:opacity-90 px-2"
       aria-label="카카오 로그인"
     >
       <div className=" justify-center inline-flex items-center gap-2">
