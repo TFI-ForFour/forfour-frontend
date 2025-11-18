@@ -1,6 +1,7 @@
+import type { ModalBaseOpenProps } from "@/shared/types/modal";
 import { User2 } from "lucide-react";
 
-const NickNameHeader = () => {
+const NickNameHeader = ({ onOpen }: ModalBaseOpenProps) => {
   return (
     <div className="flex w-full items-center gap-2 justify-between">
       <div className="flex w-full gap-1 items-center">
@@ -14,7 +15,10 @@ const NickNameHeader = () => {
       </div>
 
       <div className="flex">
-        <button className="flex rounded-xl border border-gray-100 py-4 px-2 items-center justify-center text-title-18-semibold whitespace-nowrap">
+        <button
+          className="flex rounded-xl border border-gray-100 py-4 px-2 items-center justify-center text-title-18-semibold whitespace-nowrap"
+          onClick={onOpen}
+        >
           <span>닉네임 변경</span>
         </button>
       </div>
