@@ -58,6 +58,13 @@ body {
 
   --radius: 0.625rem;
 
+  /* Icon Size */
+  --icon-xs: 16px;
+  --icon-s: 20px;
+  --icon-m: 24px;
+  --icon-l: 40px;
+  --icon-xl: 48px;
+
   /* 기타 토큰 (원래값 유지) */
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -130,6 +137,12 @@ body {
   }
 
   /* Titles */
+  .text-title-22-semibold {
+    font-size: 22px;
+    line-height: 136%;
+    letter-spacing: 0;
+    font-weight: 600;
+  }
   .text-title-20-bold {
     font-size: 20px;
     line-height: 136%;
@@ -291,6 +304,28 @@ body {
   }
   .bg-color {
     background-color: var(--c) !important;
+  }
+
+  /* Icon Size 유틸리티 */
+  .icon-xs {
+    width: var(--icon-xs);
+    height: var(--icon-xs);
+  }
+  .icon-s {
+    width: var(--icon-s);
+    height: var(--icon-s);
+  }
+  .icon-m {
+    width: var(--icon-m);
+    height: var(--icon-m);
+  }
+  .icon-l {
+    width: var(--icon-l);
+    height: var(--icon-l);
+  }
+  .icon-xl {
+    width: var(--icon-xl);
+    height: var(--icon-xl);
   }
 
   /* 토큰 매핑 (각 토큰은 --c 를 설정) */
