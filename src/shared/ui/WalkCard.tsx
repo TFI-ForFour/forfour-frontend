@@ -22,6 +22,11 @@ const WalkCard = () => {
       <div className="flex items-center">
         <span className="text-title-22-semibold">도착 장소: 사부작 앞</span>
       </div>
+
+      {/* 산책 방장 닉네임 */}
+      <div className="flex items-center mt-3">
+        <span className="text-title-20-semibold">방장: 김김김</span>
+      </div>
     </div>
   );
 };
