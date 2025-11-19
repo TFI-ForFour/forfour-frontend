@@ -137,6 +137,12 @@ body {
   }
 
   /* Titles */
+  .text-title-24-semibold {
+    font-size: 24px;
+    line-height: 136%;
+    letter-spacing: 0;
+    font-weight: 600;
+  }
   .text-title-22-semibold {
     font-size: 22px;
     line-height: 136%;
