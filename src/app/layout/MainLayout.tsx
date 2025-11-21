@@ -9,16 +9,16 @@ const NAVIGATION_ITEMS = [
 
 const MainLayout = () => {
   return (
-    <div className="flex min-h-screen flex-col bg-white">
-      <header className="flex h-20 items-center justify-center border-b border-gray-200">
+    <div className="flex flex-col bg-white h-dvh">
+      <header className="flex h-20 shrink-0 items-center justify-center border-b border-gray-200">
         <span className="text-3xl font-extrabold text-sky-500">포포</span>
       </header>
 
-      <main className="flex-1 overflow-y-auto p-2">
+      <main className="flex-1 min-h-0 overflow-y-auto px-8 py-6">
         <Outlet />
       </main>
 
-      <nav className="sticky bottom-0 -mx-4 border-t border-gray-200 bg-white px-6 py-4">
+      <nav className="sticky bottom-0 left-0 right-0 shrink-0 border-t border-gray-200 bg-white px-6 py-4">
         <ul className="flex items-center justify-between gap-6">
           {NAVIGATION_ITEMS.map(({ to, label, Icon, end }) => (
             <li key={to} className="flex-1">
