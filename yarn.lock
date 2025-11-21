@@ -1317,6 +1317,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@use-funnel/core@npm:^0.0.13":
+  version: 0.0.13
+  resolution: "@use-funnel/core@npm:0.0.13"
+  peerDependencies:
+    react: ">=16.8"
+  checksum: 10c0/33ef85e11950ab64f19404508d53495b4f1514af1dc66c99eb60cd944be9522a84c14da9d92082902fa76b25b6d29ab216e89f1291a4d725cd25a65d444d79db
+  languageName: node
+  linkType: hard
+
+"@use-funnel/react-router-dom@npm:^0.0.15":
+  version: 0.0.15
+  resolution: "@use-funnel/react-router-dom@npm:0.0.15"
+  dependencies:
+    "@use-funnel/core": "npm:^0.0.13"
+  peerDependencies:
+    react: ">=16.8"
+    react-router-dom: ">=6"
+  checksum: 10c0/350d08d079f525db28ebc7761bf25797b3490048bda78de409a296e59f7c7c194af37bc1c9716e5bfab412c1b4bc5a0cb28d9d9833a70a90e8ee24487e13b390
+  languageName: node
+  linkType: hard
+
 "@vitejs/plugin-react@npm:^5.0.4":
   version: 5.1.0
   resolution: "@vitejs/plugin-react@npm:5.1.0"
@@ -2283,6 +2304,7 @@ __metadata:
     "@types/node": "npm:^24.6.0"
     "@types/react": "npm:^19.1.16"
     "@types/react-dom": "npm:^19.1.9"
+    "@use-funnel/react-router-dom": "npm:^0.0.15"
     "@vitejs/plugin-react": "npm:^5.0.4"
     "@yarnpkg/sdks": "npm:^3.2.3"
     eslint: "npm:^9.36.0"
