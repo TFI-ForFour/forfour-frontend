@@ -8,6 +8,8 @@ import { createBrowserRouter } from "react-router-dom";
 import SubLayout from "../layout/SubLayout";
 import CourseSuccess from "@/pages/createwalk/components/CourseSuccess";
 import DetailWalkPage from "@/pages/detailwalk/ui/DetailWalkPage";
+import WalkingPage from "@/pages/walking/ui/WalkingPage";
+import WalkingSuccessPage from "@/pages/walking/ui/WalkingSuccessPage";
 
 export const router = createBrowserRouter([
   {
@@ -29,10 +31,6 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    path: "/login",
-    element: <LoginPage />,
-  },
-  {
     path: "/",
     element: <SubLayout backTo="/" />,
     children: [
@@ -47,7 +45,24 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    path: "/createwalk/success",
-    element: <CourseSuccess />,
+    path: "/",
+    children: [
+      {
+        path: "/createwalk/success",
+        element: <CourseSuccess />,
+      },
+      {
+        path: "/login",
+        element: <LoginPage />,
+      },
+      {
+        path: "/walking/:roomId",
+        element: <WalkingPage />,
+      },
+      {
+        path: "/walking/:roomId/success",
+        element: <WalkingSuccessPage />,
+      },
+    ],
   },
 ]);
