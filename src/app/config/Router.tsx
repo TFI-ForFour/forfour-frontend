@@ -7,6 +7,7 @@ import MyWalksPage from "@/pages/walks/ui/MyWalksPage";
 import { createBrowserRouter } from "react-router-dom";
 import SubLayout from "../layout/SubLayout";
 import CourseSuccess from "@/pages/createwalk/components/CourseSuccess";
+import DetailWalkPage from "@/pages/detailwalk/ui/DetailWalkPage";
 
 export const router = createBrowserRouter([
   {
@@ -38,6 +39,10 @@ export const router = createBrowserRouter([
       {
         path: "createwalk",
         element: <CreateWalkPage />,
+      },
+      {
+        path: "room/:roomId",
+        element: <DetailWalkPage />,
       },
     ],
   },
