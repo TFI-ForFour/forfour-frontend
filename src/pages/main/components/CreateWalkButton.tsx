@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 
 const CreateWalkButton = () => {
   const navigate = useNavigate();
+
   return (
     <button
       className="flex w-full rounded-full py-4 items-center justify-center bg-sky-300"

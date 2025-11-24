@@ -1,6 +1,11 @@
 import { LucideWandSparkles } from "lucide-react";
 
-const ChooseCourse = () => {
+type ChooseCourseProps = {
+  pathId?: string;
+  onChangePathId?: (pathId: string) => void;
+};
+
+const ChooseCourse = ({ pathId, onChangePathId }: ChooseCourseProps) => {
   return (
     <>
       <div className="flex w-full items-center justify-start gap-2">
@@ -17,7 +22,17 @@ const ChooseCourse = () => {
           </span>
         </div>
 
-        <div className="flex w-full gap-2"></div>
+        <div className="flex w-full gap-2">
+          {/* 임시 ui */}
+          <input
+            id="pathId"
+            type="text"
+            placeholder="코스 ID를 입력해주세요"
+            className="flex-1 rounded-xl border border-gray-300 bg-white px-4 py-3 text-body-16-regular placeholder:text-gray-400 focus:border-blue-400 focus:outline-none"
+            value={pathId ?? ""}
+            onChange={(e) => onChangePathId?.(e.target.value)}
+          />
+        </div>
       </div>
     </>
   );
