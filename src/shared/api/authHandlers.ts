@@ -20,28 +20,41 @@ type MemberResponse = {
 export const createAuthHandlers = (memberClient: AxiosInstance) => {
   let profileHydrated = false;
 
+  const hydrateProfileIfNeeded = async () => {
+    if (profileHydrated) return;
+
+    const token = localStorage.getItem("accessToken");
+    if (!token) return;
+
+    const existingProfile = useAuthStore.getState().profile;
+    if (existingProfile) {
+      profileHydrated = true;
+      return;
+    }
+
+    profileHydrated = true;
+    try {
+      const { data } = await memberClient.get<MemberResponse>("/member");
+      const { id, nickname, totalWalkCount, totalDistance } = data.data;
+      useAuthStore
+        .getState()
+        .setProfile({
+          memberId: id,
+          nickName: nickname,
+          totalWalkCount,
+          totalDistance,
+        });
+    } catch (error) {
+      profileHydrated = false;
+      console.error("사용자 정보를 불러오지 못했습니다.", error);
+    }
+  };
+
   const withAuthHeader = async (config: InternalAxiosRequestConfig) => {
     const token = localStorage.getItem("accessToken");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-
-      if (!profileHydrated && !useAuthStore.getState().profile) {
-        profileHydrated = true;
-        try {
-          const { data } = await memberClient.get<MemberResponse>("/member");
-          const { id, nickname, totalWalkCount, totalDistance } = data.data;
-          useAuthStore
-            .getState()
-            .setProfile({
-              memberId: id,
-              nickName: nickname,
-              totalWalkCount,
-              totalDistance,
-            });
-        } catch (error) {
-          console.error("사용자 정보를 불러오지 못했습니다.", error);
-        }
-      }
+      await hydrateProfileIfNeeded();
     }
     return config;
   };
@@ -67,5 +80,5 @@ export const createAuthHandlers = (memberClient: AxiosInstance) => {
     return Promise.reject(error);
   };
 
-  return { withAuthHeader, handleAuthError };
+  return { withAuthHeader, handleAuthError, hydrateProfileIfNeeded };
 };

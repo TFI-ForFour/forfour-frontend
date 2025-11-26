@@ -1,7 +1,9 @@
+import { useAuthStore } from "@/shared/store";
 import type { ModalBaseOpenProps } from "@/shared/types/modal";
 import { User2 } from "lucide-react";
 
 const NickNameHeader = ({ onOpen }: ModalBaseOpenProps) => {
+  const nickName = useAuthStore((state) => state.profile?.nickName);
   return (
     <div className="flex w-full items-center gap-2 justify-between">
       <div className="flex w-full gap-1 items-center">
@@ -10,7 +12,7 @@ const NickNameHeader = ({ onOpen }: ModalBaseOpenProps) => {
         </div>
 
         <div className="flex text-headline-24-bold items-center truncate">
-          <span>도레미파솔라시도</span>
+          {nickName}
         </div>
       </div>
 
@@ -19,7 +21,7 @@ const NickNameHeader = ({ onOpen }: ModalBaseOpenProps) => {
           className="flex rounded-xl border border-gray-100 py-4 px-2 items-center justify-center text-title-18-semibold whitespace-nowrap"
           onClick={onOpen}
         >
-          <span>닉네임 변경</span>
+          닉네임 변경
         </button>
       </div>
     </div>
