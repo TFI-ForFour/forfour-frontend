@@ -46,7 +46,7 @@ export type FetchMyWalkRoomsParams = {
 
 export const fetchMyWalkRooms = async ({
   pageSize = 10,
-  pageNum = 10,
+  pageNum = 0,
 }: FetchMyWalkRoomsParams = {}): Promise<MyWalkRoom[]> => {
   const { data } = await apiClient.get<MyRoomListResponse>("/my-room", {
     params: { pageSize, pageNum },

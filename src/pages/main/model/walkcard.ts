@@ -47,7 +47,7 @@ export type FetchWalkRoomsParams = {
 
 export const fetchWalkRooms = async ({
   pageSize = 10,
-  pageNum = 10,
+  pageNum = 0,
   roomStatus = "RECRUITING",
 }: FetchWalkRoomsParams = {}): Promise<WalkRoom[]> => {
   const { data } = await apiClient.get<RoomListResponse>("/room-list", {
