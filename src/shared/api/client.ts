@@ -27,7 +27,8 @@ export const setAuthToken = (token: string) => {
   externalClient.defaults.headers.common.Authorization = `Bearer ${token}`;
 };
 
-const { withAuthHeader, handleAuthError } = createAuthHandlers(apiClient);
+const { withAuthHeader, handleAuthError, hydrateProfile } =
+  createAuthHandlers(apiClient);
 
 apiClient.interceptors.response.use(
   (response) => response,
@@ -41,3 +42,5 @@ externalClient.interceptors.response.use(
 
 apiClient.interceptors.request.use(withAuthHeader);
 externalClient.interceptors.request.use(withAuthHeader);
+
+export const hydrateAuthProfile = hydrateProfile;
