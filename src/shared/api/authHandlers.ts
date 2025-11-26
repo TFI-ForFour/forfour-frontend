@@ -20,7 +20,7 @@ type MemberResponse = {
 export const createAuthHandlers = (memberClient: AxiosInstance) => {
   let profileHydrated = false;
 
-  const hydrateProfileIfNeeded = async () => {
+  const hydrateProfile = async () => {
     if (profileHydrated) return;
 
     const token = localStorage.getItem("accessToken");
@@ -50,11 +50,10 @@ export const createAuthHandlers = (memberClient: AxiosInstance) => {
     }
   };
 
-  const withAuthHeader = async (config: InternalAxiosRequestConfig) => {
+  const withAuthHeader = (config: InternalAxiosRequestConfig) => {
     const token = localStorage.getItem("accessToken");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-      await hydrateProfileIfNeeded();
     }
     return config;
   };
@@ -80,5 +79,5 @@ export const createAuthHandlers = (memberClient: AxiosInstance) => {
     return Promise.reject(error);
   };
 
-  return { withAuthHeader, handleAuthError, hydrateProfileIfNeeded };
+  return { withAuthHeader, handleAuthError, hydrateProfile };
 };

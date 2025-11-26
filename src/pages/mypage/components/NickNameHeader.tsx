@@ -1,12 +1,14 @@
-import { useAuthStore } from "@/shared/store";
 import type { ModalBaseOpenProps } from "@/shared/types/modal";
 import { User2 } from "lucide-react";
 
-const NickNameHeader = ({ onOpen }: ModalBaseOpenProps) => {
-  const nickName = useAuthStore((state) => state.profile?.nickName);
+type NickNameHeaderProps = ModalBaseOpenProps & {
+  nickName?: string;
+};
+
+const NickNameHeader = ({ onOpen, nickName }: NickNameHeaderProps) => {
   return (
     <div className="flex w-full items-center gap-2 justify-between">
-      <div className="flex w-full gap-1 items-center">
+      <div className="flex w-full gap-2 items-center">
         <div className="flex items-center justify-center rounded-full border border-gray-200 p-2">
           <User2 className="flex icon-m" />
         </div>
