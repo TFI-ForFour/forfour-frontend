@@ -10,12 +10,18 @@ type MarketQrScannerProps = {
   onClose?: () => void;
 };
 
-const MarketQrScanner = ({ roomId, onSuccess, onClose }: MarketQrScannerProps) => {
+const MarketQrScanner = ({
+  roomId,
+  onSuccess,
+  onClose,
+}: MarketQrScannerProps) => {
   const navigate = useNavigate();
   const [scanError, setScanError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [result, setResult] = useState<string | null>(null);
-  const [preferredDeviceId, setPreferredDeviceId] = useState<string | undefined>(undefined);
+  const [preferredDeviceId, setPreferredDeviceId] = useState<
+    string | undefined
+  >(undefined);
   const [cameraError, setCameraError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -27,7 +33,9 @@ const MarketQrScanner = ({ roomId, onSuccess, onClose }: MarketQrScannerProps) =
       }
       try {
         // 1) 권한 요청
-        const tempStream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const tempStream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+        });
         // 2) 장치 목록 조회 후 후면 카메라 우선 선택
         const devices = await navigator.mediaDevices.enumerateDevices();
         const videoDevices = devices.filter((d) => d.kind === "videoinput");
@@ -35,7 +43,8 @@ const MarketQrScanner = ({ roomId, onSuccess, onClose }: MarketQrScannerProps) =
           throw new Error("사용 가능한 카메라가 없습니다.");
         }
         const backCam =
-          videoDevices.find((d) => /back|rear|환경/i.test(d.label)) ?? videoDevices[0];
+          videoDevices.find((d) => /back|rear|environment/i.test(d.label)) ??
+          videoDevices[0];
         if (!canceled) {
           setPreferredDeviceId(backCam.deviceId);
           setCameraError(null);
@@ -45,7 +54,9 @@ const MarketQrScanner = ({ roomId, onSuccess, onClose }: MarketQrScannerProps) =
       } catch (error) {
         console.error("카메라 준비 실패:", error);
         if (!canceled) {
-          setCameraError("카메라 권한이 필요합니다. 브라우저 권한을 확인해주세요.");
+          setCameraError(
+            "카메라 권한이 필요합니다. 브라우저 권한을 확인해주세요."
+          );
         }
       }
     };
@@ -80,9 +91,7 @@ const MarketQrScanner = ({ roomId, onSuccess, onClose }: MarketQrScannerProps) =
         } catch (error) {
           console.error(error);
           setScanError(
-            error instanceof Error
-              ? error.message
-              : "QR 인식에 실패했습니다."
+            error instanceof Error ? error.message : "QR 인식에 실패했습니다."
           );
         } finally {
           setIsProcessing(false);
