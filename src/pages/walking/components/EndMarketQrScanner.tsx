@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react"; // useEffect 제거 (카메라 초기화 로직 삭제됨)
 import { useNavigate } from "react-router-dom";
 import { QrReader } from "react-qr-reader";
+import type { OnResultFunction } from "react-qr-reader";
 import {
   parseMarketQrPayload,
   requestEndMarket,
@@ -13,76 +14,52 @@ type EndMarketQrScannerProps = {
   onClose?: () => void;
 };
 
-const EndMarketQrScanner = ({ roomId, onSuccess, onClose }: EndMarketQrScannerProps) => {
+const EndMarketQrScanner = ({
+  roomId,
+  onSuccess,
+  onClose,
+}: EndMarketQrScannerProps) => {
   const navigate = useNavigate();
   const [scanError, setScanError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [result, setResult] = useState<string | null>(null);
-  const [preferredDeviceId, setPreferredDeviceId] = useState<string | undefined>(undefined);
-  const [cameraError, setCameraError] = useState<string | null>(null);
 
-  useEffect(() => {
-    let canceled = false;
-    const prepareCamera = async () => {
-      if (!navigator.mediaDevices?.getUserMedia) {
-        setCameraError("이 기기에서 카메라를 사용할 수 없습니다.");
-        return;
-      }
-      try {
-        const tempStream = await navigator.mediaDevices.getUserMedia({ video: true });
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        const videoDevices = devices.filter((d) => d.kind === "videoinput");
-        if (videoDevices.length === 0) {
-          throw new Error("사용 가능한 카메라가 없습니다.");
-        }
-        const backCam =
-          videoDevices.find((d) => /back|rear|환경/i.test(d.label)) ?? videoDevices[0];
-        if (!canceled) {
-          setPreferredDeviceId(backCam.deviceId);
-          setCameraError(null);
-        }
-        tempStream.getTracks().forEach((track) => track.stop());
-      } catch (error) {
-        console.error("카메라 준비 실패:", error);
-        if (!canceled) {
-          setCameraError("카메라 권한이 필요합니다. 브라우저 권한을 확인해주세요.");
-        }
-      }
-    };
+  // preferredDeviceId, cameraError 등 수동 제어 로직 관련 상태 삭제
 
-    void prepareCamera();
-    return () => {
-      canceled = true;
-    };
-  }, []);
-
-  const handleQrResult = useCallback(
-    async (qrResult: any, qrError: any) => {
+  const handleQrResult = useCallback<OnResultFunction>(
+    (qrResult, qrError) => {
+      // 1. 에러가 있거나, 결과가 없거나, 이미 처리 중이면 무시
       if (qrError) {
         return;
       }
       if (!qrResult || isProcessing) return;
 
-      try {
-        setIsProcessing(true);
-        const text = qrResult?.text ?? qrResult;
-        if (!text) {
-          throw new Error("QR 내용이 비어 있습니다.");
+      const processScan = async () => {
+        try {
+          setIsProcessing(true);
+          const text = qrResult.getText(); // 타입 안전성을 위해 getText() 사용 권장
+          if (!text) {
+            throw new Error("QR 내용이 비어 있습니다.");
+          }
+
+          const { marketId } = parseMarketQrPayload(text);
+          const endResult = await requestEndMarket(roomId, marketId);
+
+          setResult(`시장 ${marketId}로 종료 지점을 설정했습니다.`);
+          setScanError(null);
+          onSuccess?.(endResult);
+          navigate(`/walking/${roomId}/success`, { state: { endResult } });
+        } catch (error) {
+          console.error(error);
+          const message =
+            error instanceof Error ? error.message : "QR 인식에 실패했습니다.";
+          setScanError(message);
+        } finally {
+          setIsProcessing(false);
         }
+      };
 
-        const { marketId } = parseMarketQrPayload(text);
-        const endResult = await requestEndMarket(roomId, marketId);
-
-        setResult(`시장 ${marketId}로 종료 지점을 설정했습니다.`);
-        setScanError(null);
-        onSuccess?.(endResult);
-        navigate(`/walking/${roomId}/success`, { state: { endResult } });
-      } catch (e: any) {
-        console.error(e);
-        setScanError(e?.message ?? "QR 인식에 실패했습니다.");
-      } finally {
-        setIsProcessing(false);
-      }
+      void processScan();
     },
     [isProcessing, navigate, onSuccess, roomId]
   );
@@ -92,7 +69,7 @@ const EndMarketQrScanner = ({ roomId, onSuccess, onClose }: EndMarketQrScannerPr
       <div className="flex w-full max-w-lg flex-col items-center gap-4 rounded-2xl border border-white/10 bg-white/95 px-4 py-5 shadow-lg backdrop-blur">
         <div className="flex w-full items-center justify-between">
           <h2 className="text-title-20-semibold text-gray-900">
-            도착 시장 QR을 스캔해주세요
+            도착지 QR을 스캔해주세요
           </h2>
           <button
             type="button"
@@ -105,11 +82,8 @@ const EndMarketQrScanner = ({ roomId, onSuccess, onClose }: EndMarketQrScannerPr
 
         <div className="relative w-full overflow-hidden rounded-xl bg-black aspect-[3/4]">
           <QrReader
-            constraints={
-              preferredDeviceId
-                ? { deviceId: { exact: preferredDeviceId } }
-                : { facingMode: { ideal: "environment" } }
-            }
+            // 핵심 수정: iOS 호환성을 위해 복잡한 설정 제거 후 표준 설정 사용
+            constraints={{ facingMode: "environment" }}
             onResult={handleQrResult}
             videoStyle={{
               width: "100%",
@@ -120,13 +94,11 @@ const EndMarketQrScanner = ({ roomId, onSuccess, onClose }: EndMarketQrScannerPr
               width: "100%",
               height: "100%",
             }}
+            // 기본 붉은색 가이드 숨김 (커스텀 테두리를 사용 중이므로)
+            ViewFinder={() => null}
           />
           <div className="pointer-events-none absolute inset-0 border-2 border-white/70" />
         </div>
-
-        {cameraError && (
-          <p className="text-sm text-red-600 text-center">{cameraError}</p>
-        )}
 
         {isProcessing && (
           <p className="text-sm text-gray-500">처리 중입니다...</p>

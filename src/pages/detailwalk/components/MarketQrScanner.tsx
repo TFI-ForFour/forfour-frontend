@@ -48,7 +48,7 @@ const MarketQrScanner = ({
           const { marketId } = parseMarketQrPayload(text);
           await requestStartMarket(roomId, marketId);
 
-          setResult(`시장 ${marketId}로 시작 지점을 설정했습니다.`);
+          setResult(`출발지 ${marketId}로 시작 지점을 설정했습니다.`);
           setScanError(null);
           onSuccess?.(marketId);
           navigate(`/walking/${roomId}`);
