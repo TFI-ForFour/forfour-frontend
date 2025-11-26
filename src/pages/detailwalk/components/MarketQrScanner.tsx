@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react"; // useEffect 제거
+import { useCallback, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { QrReader } from "react-qr-reader";
 import type { OnResultFunction } from "react-qr-reader";
@@ -19,23 +19,31 @@ const MarketQrScanner = ({
   const [scanError, setScanError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [result, setResult] = useState<string | null>(null);
+  const [cameraReady, setCameraReady] = useState(false);
 
-  // 카메라 에러 상태 관리가 필요하다면 QrReader의 onResult나 onError prop을 활용하는 것이 좋습니다.
-  // 여기서는 단순화를 위해 제거했으나, 필요시 QrReader 내부에서 처리되는 에러를 잡아야 합니다.
+  // iOS에서 카메라 권한 및 초기화 확인
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!cameraReady) {
+        setScanError("카메라를 불러오는 중입니다. 잠시만 기다려주세요.");
+      }
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [cameraReady]);
 
   const handleQrResult = useCallback<OnResultFunction>(
     (qrResult, qrError) => {
-      // 1. 에러가 있거나, 결과가 없거나, 처리 중이면 무시
       if (qrError) {
-        // qrError는 스캔 중 QR을 못 찾을 때도 계속 발생하므로
-        // 실제 카메라 권한 에러인지 구분이 필요할 수 있습니다.
-        // 보통은 로그를 찍지 않거나 무시합니다.
+        // 카메라가 로드되면 ready 상태로 변경
+        if (!cameraReady) {
+          setCameraReady(true);
+          setScanError(null);
+        }
         return;
       }
 
-      if (!qrResult || isProcessing) {
-        return;
-      }
+      if (!qrResult || isProcessing) return;
 
       const processScan = async () => {
         try {
@@ -54,9 +62,9 @@ const MarketQrScanner = ({
           navigate(`/walking/${roomId}`);
         } catch (error) {
           console.error(error);
-          setScanError(
-            error instanceof Error ? error.message : "QR 인식에 실패했습니다."
-          );
+          const message =
+            error instanceof Error ? error.message : "QR 인식에 실패했습니다.";
+          setScanError(message);
         } finally {
           setIsProcessing(false);
         }
@@ -64,7 +72,7 @@ const MarketQrScanner = ({
 
       void processScan();
     },
-    [isProcessing, navigate, onSuccess, roomId]
+    [isProcessing, navigate, onSuccess, roomId, cameraReady]
   );
 
   return (
@@ -83,26 +91,50 @@ const MarketQrScanner = ({
           </button>
         </div>
 
-        <div className="relative w-full overflow-hidden rounded-xl bg-black aspect-[3/4]">
+        <div
+          className="relative w-full rounded-xl bg-black"
+          style={{ height: "500px" }}
+        >
+          {/* iOS Safari 호환성을 위한 수정된 설정 */}
           <QrReader
-            // 핵심 수정: 복잡한 deviceId 로직을 제거하고 facingMode만 사용
-            constraints={{ facingMode: "environment" }}
+            constraints={{
+              facingMode: "environment",
+              // iOS에서 더 나은 호환성을 위한 추가 설정
+              aspectRatio: { ideal: 1 },
+              width: { ideal: 1920 },
+              height: { ideal: 1080 },
+            }}
             onResult={handleQrResult}
-            // videoStyle을 조정하여 모바일에서 꽉 차게 보이도록 설정
             videoStyle={{
               width: "100%",
               height: "100%",
-              objectFit: "cover",
+              objectFit: "contain",
+              // iOS에서 비디오가 보이도록 명시적 스타일
+              display: "block",
             }}
             containerStyle={{
               width: "100%",
               height: "100%",
             }}
-            // 뷰파인더 기능을 끄고 직접 구현한 div를 사용하므로 false (라이브러리 버전에 따라 다름)
+            videoId="qr-video-start"
+            scanDelay={300}
             ViewFinder={() => null}
           />
-          {/* 가이드 라인 (ViewFinder 역할) */}
-          <div className="pointer-events-none absolute inset-0 border-2 border-white/70" />
+
+          {/* 중앙 가이드 박스 */}
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+            <div className="w-72 h-72 border-4 border-white/90 rounded-2xl shadow-lg" />
+          </div>
+
+          {/* 카메라 로딩 중 표시 */}
+          {!cameraReady && !scanError && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+              <div className="text-white text-center">
+                <div className="mb-2">📷</div>
+                <p className="text-sm">카메라 로딩 중...</p>
+              </div>
+            </div>
+          )}
         </div>
 
         {isProcessing && (
@@ -120,6 +152,11 @@ const MarketQrScanner = ({
             {scanError}
           </div>
         )}
+
+        {/* iOS 사용자를 위한 추가 안내 */}
+        <p className="text-xs text-gray-400 text-center">
+          카메라가 보이지 않으면 브라우저의 카메라 권한을 확인해주세요
+        </p>
       </div>
     </div>
   );

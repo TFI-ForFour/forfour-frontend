@@ -1,14 +1,23 @@
 import { Wand2 } from "lucide-react";
 import { useMemo } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import type { EndMarketResult } from "@/pages/detailwalk/model/startWalk";
 import { formatWalkStartAt } from "@/pages/main/model/walkcard";
+import type { MissionName } from "@/pages/createwalk/types/walkFunnel";
+import { walkCourse } from "@/pages/createwalk/utils/walkcourse";
 
 const WalkingSuccessPage = () => {
   const navigate = useNavigate();
-  const { roomId } = useParams<{ roomId: string }>();
   const location = useLocation();
-  const endResult = (location.state as { endResult?: EndMarketResult } | undefined)?.endResult;
+  const endResult = (
+    location.state as { endResult?: EndMarketResult } | undefined
+  )?.endResult;
+  const missionLabels: Record<MissionName, string> = {
+    NO_MISSION: "미션 없음",
+    PLOGGING: "산책하며 플로깅 해요",
+    DELIVERY: "산책하며 이웃에게 배달을 해요",
+    PARK: "공원에서 함께 운동해요",
+  };
 
   const formattedStart = useMemo(() => {
     if (!endResult?.roomDetail.startAt) return null;
@@ -19,6 +28,18 @@ const WalkingSuccessPage = () => {
   const minutesText = endResult
     ? `${Math.floor(endResult.minutes / 60)}시간 ${endResult.minutes % 60}분`
     : "0분";
+  const missionLabel = endResult?.roomDetail.missionName
+    ? missionLabels[endResult.roomDetail.missionName as MissionName] ??
+      endResult.roomDetail.missionName
+    : "미션 정보 없음";
+  const pathImageUrl = useMemo(() => {
+    if (endResult?.roomDetail.pathImageUrl) return endResult.roomDetail.pathImageUrl;
+    if (endResult?.roomDetail.pathId) {
+      return walkCourse.find((course) => course.pathId === endResult.roomDetail.pathId)
+        ?.pathImgUrl;
+    }
+    return undefined;
+  }, [endResult?.roomDetail.pathId, endResult?.roomDetail.pathImageUrl]);
 
   const handleGoHome = () => {
     navigate("/", { replace: true });
@@ -42,9 +63,6 @@ const WalkingSuccessPage = () => {
             <span className="text-title-24-semibold text-black">
               {endResult?.roomDetail.title ?? "산책 제목"}
             </span>
-            {roomId && (
-              <span className="text-14-medium text-gray-500">roomId: {roomId}</span>
-            )}
           </div>
         </div>
       </header>
@@ -68,15 +86,15 @@ const WalkingSuccessPage = () => {
         <div className="rounded-xl bg-gray-50 px-4 py-3">
           <p className="text-title-18-semibold text-gray-500">서브 미션</p>
           <p className="text-title-20-semibold text-black mt-1">
-            {endResult?.roomDetail.missionName ?? "미션 정보 없음"}
+            {missionLabel}
           </p>
         </div>
 
         <div className="rounded-2xl bg-white px-4 py-6 shadow-inner shadow-gray-200">
           <div className="flex h-36 items-center justify-center rounded-xl bg-linear-to-b from-gray-50 to-gray-100 text-16-regular text-gray-500">
-            {endResult?.roomDetail.pathImageUrl ? (
+            {pathImageUrl ? (
               <img
-                src={endResult.roomDetail.pathImageUrl}
+                src={pathImageUrl}
                 alt="산책 코스"
                 className="h-full w-full rounded-xl object-cover"
               />

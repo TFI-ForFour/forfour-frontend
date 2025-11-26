@@ -10,6 +10,7 @@ import {
   type RoomDetail,
 } from "../model/fetchRoomDetail";
 import { updateRecruitStatus } from "../model/startWalk";
+import { joinRoom } from "../model/joinRoom";
 import { formatWalkStartAt } from "@/pages/main/model/walkcard";
 import { useAuthStore } from "@/shared/store/authStore";
 
@@ -23,6 +24,7 @@ const DetailWalkPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
   const [showQrScanner, setShowQrScanner] = useState(false);
+  const [joinLoading, setJoinLoading] = useState(false);
 
   const isLeader = useMemo(() => {
     if (!roomDetail || authProfile?.memberId === undefined) return false;
@@ -76,6 +78,34 @@ const DetailWalkPage = () => {
       setError("모집 종료에 실패했습니다.");
     } finally {
       setActionLoading(false);
+    }
+  };
+
+  const handleJoin = async () => {
+    if (!roomDetail) return;
+    try {
+      setJoinLoading(true);
+      await joinRoom(roomDetail.roomId);
+      // 성공 시 참여자 목록을 새로고침
+      setParticipants((prev) => {
+        if (!authProfile?.memberId) return prev;
+        const alreadyExists = prev.some(
+          (p) => p.memberId === authProfile.memberId
+        );
+        if (alreadyExists) return prev;
+        return [
+          ...prev,
+          {
+            memberId: authProfile.memberId,
+            memberNickName: authProfile.nickName ?? "나",
+          },
+        ];
+      });
+    } catch (err) {
+      console.error("참여하기 실패:", err);
+      setError("참여하기에 실패했습니다.");
+    } finally {
+      setJoinLoading(false);
     }
   };
 
@@ -164,8 +194,12 @@ const DetailWalkPage = () => {
           <button
             className="w-full rounded-xl bg-sky-500 py-3 text-title-20-semibold text-white transition hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-200 focus:ring-offset-1 focus:ring-offset-white disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-600"
             disabled={
-              !roomDetail || isLoading || roomDetail?.status !== "RECRUITING"
+              !roomDetail ||
+              isLoading ||
+              joinLoading ||
+              roomDetail?.status !== "RECRUITING"
             }
+            onClick={handleJoin}
           >
             참여하기
           </button>

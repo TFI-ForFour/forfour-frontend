@@ -95,7 +95,7 @@ const EndMarketQrScanner = ({
           </button>
         </div>
 
-        <div className="relative w-full overflow-hidden rounded-xl bg-black aspect-[3/4]">
+        <div className="relative w-full overflow-hidden rounded-xl bg-black aspect-3/4">
           {/* iOS Safari 호환성을 위한 수정된 설정 */}
           <QrReader
             constraints={{

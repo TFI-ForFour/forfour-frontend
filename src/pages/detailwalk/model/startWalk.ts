@@ -1,4 +1,5 @@
 import { apiClient } from "@/shared/api";
+import { walkCourse } from "@/pages/createwalk/utils/walkcourse";
 
 export type MarketQrPayload = {
   marketId: string;
@@ -37,6 +38,7 @@ export type EndMarketResult = {
     roomId: number;
     title: string;
     missionName: string;
+    pathId?: number;
     pathImageUrl?: string;
     startAt: string;
   };
@@ -49,5 +51,16 @@ export const requestEndMarket = async (
   const { data } = await apiClient.patch<{ data: EndMarketResult }>(
     `/room/${roomId}/end-market/${marketId}`
   );
-  return data.data;
+  const pathMeta = data.data.roomDetail.pathId
+    ? walkCourse.find((course) => course.pathId === data.data.roomDetail.pathId)
+    : undefined;
+
+  return {
+    ...data.data,
+    roomDetail: {
+      ...data.data.roomDetail,
+      pathImageUrl:
+        pathMeta?.pathImgUrl ?? data.data.roomDetail.pathImageUrl,
+    },
+  };
 };
