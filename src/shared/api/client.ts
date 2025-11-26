@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { type InternalAxiosRequestConfig } from "axios";
 import { useAuthStore } from "../store";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
@@ -25,6 +25,14 @@ export const externalClient = axios.create({
 export const setAuthToken = (token: string) => {
   apiClient.defaults.headers.common.Authorization = `Bearer ${token}`;
   externalClient.defaults.headers.common.Authorization = `Bearer ${token}`;
+};
+
+const withAuthHeader = (config: InternalAxiosRequestConfig) => {
+  const token = localStorage.getItem("accessToken");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
 };
 
 // 공통 JWT 토큰 에러 핸들러
@@ -61,3 +69,6 @@ externalClient.interceptors.response.use(
   (response) => response,
   (error) => handleAuthError(error)
 );
+
+apiClient.interceptors.request.use(withAuthHeader);
+externalClient.interceptors.request.use(withAuthHeader);

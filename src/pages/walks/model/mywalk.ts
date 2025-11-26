@@ -1,13 +1,13 @@
 import { apiClient } from "@/shared/api";
 
-export type WalkRoomStatus =
+export type MyWalkRoomStatus =
   | "RECRUITING"
   | "RECRUITED_END"
   | "CANCLED"
   | "PROGRESS"
   | "COMPLETED";
 
-export type WalkRoom = {
+export type MyWalkRoom = {
   roomId: number;
   title: string;
   leaderId: number;
@@ -18,7 +18,7 @@ export type WalkRoom = {
   missionName: string;
   maxMemberCount: number;
   memberCount: number;
-  status: WalkRoomStatus;
+  status: MyWalkRoomStatus;
   startAt: string;
 };
 
@@ -29,31 +29,28 @@ type Pageable = {
   isLast: boolean;
 };
 
-type RoomListResponse = {
+type MyRoomListResponse = {
   status: number;
   code: string;
   message: string;
   data: {
-    dataList: WalkRoom[];
+    dataList: MyWalkRoom[];
     pageable: Pageable;
   };
 };
 
-export type FetchWalkRoomsParams = {
+export type FetchMyWalkRoomsParams = {
   pageSize?: number;
   pageNum?: number;
-  roomStatus?: WalkRoomStatus;
 };
 
-export const fetchWalkRooms = async ({
+export const fetchMyWalkRooms = async ({
   pageSize = 10,
   pageNum = 0,
-  roomStatus = "RECRUITING",
-}: FetchWalkRoomsParams = {}): Promise<WalkRoom[]> => {
-  const { data } = await apiClient.get<RoomListResponse>("/room-list", {
-    params: { pageSize, pageNum, roomStatus },
+}: FetchMyWalkRoomsParams = {}): Promise<MyWalkRoom[]> => {
+  const { data } = await apiClient.get<MyRoomListResponse>("/my-room", {
+    params: { pageSize, pageNum },
   });
-
   return data.data.dataList;
 };
 
