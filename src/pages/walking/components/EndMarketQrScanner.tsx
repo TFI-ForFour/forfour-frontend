@@ -55,13 +55,21 @@ const EndMarketQrScanner = ({ roomId, onSuccess }: EndMarketQrScannerProps) => {
         도착 시장 QR을 스캔해주세요
       </h2>
 
-      <div className="w-full max-w-sm overflow-hidden rounded-xl bg-black">
+      <div className="relative w-full max-w-sm overflow-hidden rounded-xl bg-black aspect-[3/4]">
         <QrReader
           constraints={{ facingMode: "environment" }}
           onResult={handleQrResult}
-          videoStyle={{ width: "100%", height: "auto" }}
-          containerStyle={{ width: "100%" }}
+          videoStyle={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+          }}
+          containerStyle={{
+            width: "100%",
+            height: "100%",
+          }}
         />
+        <div className="pointer-events-none absolute inset-0 border-2 border-white/70" />
       </div>
 
       {isProcessing && (
