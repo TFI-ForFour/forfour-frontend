@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { QrReader } from "react-qr-reader";
 import {
@@ -18,6 +18,43 @@ const EndMarketQrScanner = ({ roomId, onSuccess, onClose }: EndMarketQrScannerPr
   const [scanError, setScanError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [result, setResult] = useState<string | null>(null);
+  const [preferredDeviceId, setPreferredDeviceId] = useState<string | undefined>(undefined);
+  const [cameraError, setCameraError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let canceled = false;
+    const prepareCamera = async () => {
+      if (!navigator.mediaDevices?.getUserMedia) {
+        setCameraError("이 기기에서 카메라를 사용할 수 없습니다.");
+        return;
+      }
+      try {
+        const tempStream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter((d) => d.kind === "videoinput");
+        if (videoDevices.length === 0) {
+          throw new Error("사용 가능한 카메라가 없습니다.");
+        }
+        const backCam =
+          videoDevices.find((d) => /back|rear|환경/i.test(d.label)) ?? videoDevices[0];
+        if (!canceled) {
+          setPreferredDeviceId(backCam.deviceId);
+          setCameraError(null);
+        }
+        tempStream.getTracks().forEach((track) => track.stop());
+      } catch (error) {
+        console.error("카메라 준비 실패:", error);
+        if (!canceled) {
+          setCameraError("카메라 권한이 필요합니다. 브라우저 권한을 확인해주세요.");
+        }
+      }
+    };
+
+    void prepareCamera();
+    return () => {
+      canceled = true;
+    };
+  }, []);
 
   const handleQrResult = useCallback(
     async (qrResult: any, qrError: any) => {
@@ -68,7 +105,11 @@ const EndMarketQrScanner = ({ roomId, onSuccess, onClose }: EndMarketQrScannerPr
 
         <div className="relative w-full overflow-hidden rounded-xl bg-black aspect-[3/4]">
           <QrReader
-            constraints={{ facingMode: { ideal: "environment" } }}
+            constraints={
+              preferredDeviceId
+                ? { deviceId: { exact: preferredDeviceId } }
+                : { facingMode: { ideal: "environment" } }
+            }
             onResult={handleQrResult}
             videoStyle={{
               width: "100%",
@@ -82,6 +123,10 @@ const EndMarketQrScanner = ({ roomId, onSuccess, onClose }: EndMarketQrScannerPr
           />
           <div className="pointer-events-none absolute inset-0 border-2 border-white/70" />
         </div>
+
+        {cameraError && (
+          <p className="text-sm text-red-600 text-center">{cameraError}</p>
+        )}
 
         {isProcessing && (
           <p className="text-sm text-gray-500">처리 중입니다...</p>
