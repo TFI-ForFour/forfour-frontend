@@ -70,7 +70,10 @@ const WalkingPage = () => {
 
         <div className="flex flex-col gap-6">
           {showQrScanner && roomDetail && (
-            <EndMarketQrScanner roomId={roomDetail.roomId} />
+            <EndMarketQrScanner
+              roomId={roomDetail.roomId}
+              onClose={() => setShowQrScanner(false)}
+            />
           )}
 
           <footer className="sticky bottom-0 left-0 right-0 w-full bg-transparent py-4">

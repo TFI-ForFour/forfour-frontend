@@ -134,6 +134,7 @@ const DetailWalkPage = () => {
               <MarketQrScanner
                 roomId={roomDetail.roomId}
                 onSuccess={() => navigate(`/walking/${roomDetail.roomId}`)}
+                onClose={() => setShowQrScanner(false)}
               />
             )}
           </>

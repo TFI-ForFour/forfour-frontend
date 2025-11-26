@@ -7,9 +7,10 @@ import { parseMarketQrPayload, requestStartMarket } from "../model/startWalk";
 type MarketQrScannerProps = {
   roomId: number;
   onSuccess?: (marketId: string) => void;
+  onClose?: () => void;
 };
 
-const MarketQrScanner = ({ roomId, onSuccess }: MarketQrScannerProps) => {
+const MarketQrScanner = ({ roomId, onSuccess, onClose }: MarketQrScannerProps) => {
   const navigate = useNavigate();
   const [scanError, setScanError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -54,43 +55,54 @@ const MarketQrScanner = ({ roomId, onSuccess }: MarketQrScannerProps) => {
   );
 
   return (
-    <div className="flex flex-col items-center gap-4 rounded-xl border border-gray-100 bg-white px-4 py-5 shadow-sm">
-      <h2 className="text-title-20-semibold text-gray-900">
-        출발지 QR을 스캔해주세요
-      </h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
+      <div className="flex w-full max-w-lg flex-col items-center gap-4 rounded-2xl border border-white/10 bg-white/95 px-4 py-5 shadow-lg backdrop-blur">
+        <div className="flex w-full items-center justify-between">
+          <h2 className="text-title-20-semibold text-gray-900">
+            출발지 QR을 스캔해주세요
+          </h2>
+          <button
+            type="button"
+            className="text-14-medium text-gray-500 underline"
+            onClick={onClose}
+          >
+            닫기
+          </button>
+        </div>
 
-      <div className="relative w-full max-w-sm overflow-hidden rounded-xl bg-black aspect-[3/4]">
-        <QrReader
-          constraints={{ facingMode: "environment" }}
-          onResult={handleQrResult}
-          videoStyle={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-          }}
-          containerStyle={{
-            width: "100%",
-            height: "100%",
-          }}
-        />
-        <div className="pointer-events-none absolute inset-0 border-2 border-white/70" />
+        <div className="relative w-full overflow-hidden rounded-xl bg-black aspect-[3/4]">
+          <QrReader
+            constraints={{ facingMode: { ideal: "environment" } }}
+            onResult={handleQrResult}
+            videoStyle={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+            }}
+            containerStyle={{
+              width: "100%",
+              height: "100%",
+            }}
+          />
+          <div className="pointer-events-none absolute inset-0 border-2 border-white/70" />
+        </div>
+
+        {isProcessing && (
+          <p className="text-sm text-gray-500">처리 중입니다...</p>
+        )}
+
+        {result && (
+          <div className="w-full rounded-lg bg-emerald-50 px-4 py-2 text-sm text-emerald-700">
+            {result}
+          </div>
+        )}
+
+        {scanError && (
+          <div className="w-full rounded-lg bg-red-50 px-4 py-2 text-sm text-red-600">
+            {scanError}
+          </div>
+        )}
       </div>
-
-      {isProcessing && (
-        <p className="text-sm text-gray-500">처리 중입니다...</p>
-      )}
-
-      {result && (
-        <div className="w-full rounded-lg bg-emerald-50 px-4 py-2 text-sm text-emerald-700">
-          {result}
-        </div>
-      )}
-
-      {scanError && (
-        <div className="w-full rounded-lg bg-red-50 px-4 py-2 text-sm text-red-600">
-          {scanError}
-        </div>
-      )}
     </div>
   );
 };
