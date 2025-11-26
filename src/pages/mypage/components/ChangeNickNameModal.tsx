@@ -5,7 +5,7 @@ const ChangeNickNameModal = ({ onClose }: ChangeNickNameModalProps) => {
     // 모달 바깥 배경 부분을 반투명으로 처리할지 그냥 검정 화면으로 둘지 테스트해봐야 함
     // 이유 : 반투명일 경우 뒤에 있는 화면이 보이면서 집중도가 떨어질 수 있음
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black px-6"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-6"
       onClick={onClose}
     >
       <div
