@@ -1,4 +1,5 @@
 import { useFunnel } from "@use-funnel/react-router-dom";
+import { useEffect, useState } from "react";
 import ChooseCourse from "../components/ChooseCourse";
 import ChooseDateTime from "../components/ChooseDateTime";
 import ChooseSubMission from "../components/ChooseSubMission";
@@ -10,9 +11,11 @@ import type {
 import { CREATE_WALK_STEPS } from "../types/walkFunnel";
 import { useNavigate } from "react-router-dom";
 import ChooseCourseName from "../components/ChooseCourseName";
+import { createWalkRoom } from "../model/createRoom";
 
 const CreateWalkPage = () => {
   const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const funnel = useFunnel<CreateWalkSteps>({
     id: "create",
     initial: {
@@ -27,10 +30,17 @@ const CreateWalkPage = () => {
   const isLast = currentIndex === CREATE_WALK_STEPS.length - 1;
 
   const ctx = funnel.context as CreateWalkFormState;
+  const [courseNameDraft, setCourseNameDraft] = useState(ctx.courseName ?? "");
+
+  useEffect(() => {
+    if (currentStep === "ChooseCourseName") {
+      setCourseNameDraft(ctx.courseName ?? "");
+    }
+  }, [currentStep, ctx.courseName]);
 
   const canGoNext =
     (currentStep === "ChooseCourse" && !!ctx.pathId) ||
-    (currentStep === "ChooseCourseName" && !!ctx.courseName) ||
+    (currentStep === "ChooseCourseName" && courseNameDraft.trim().length > 0) ||
     (currentStep === "ChooseDateTime" && !!ctx.walkDateTime) ||
     currentStep === "ChooseSubMission";
 
@@ -39,22 +49,46 @@ const CreateWalkPage = () => {
     funnel.history.back();
   };
 
-  const handleNext = () => {
-    if (!canGoNext) return;
+  const handleNext = async () => {
+    if (!canGoNext || isSubmitting) return;
+
+    if (currentStep === "ChooseCourseName") {
+      const nextStep = CREATE_WALK_STEPS[currentIndex + 1];
+      const nextContext = { ...ctx, courseName: courseNameDraft.trim() };
+      funnel.history.push(nextStep, nextContext);
+      return;
+    }
 
     if (currentStep === "ChooseSubMission") {
-      const payload: CreateWalkFormState = {
-        pathId: ctx.pathId,
-        courseName: ctx.courseName,
-        walkDateTime: ctx.walkDateTime,
-        subMission: ctx.subMission,
-      };
+      const pathId = Number(ctx.pathId);
+      const title = ctx.courseName;
+      const startAt = ctx.walkDateTime;
+      const missionName = ctx.subMission ?? "NO_MISSION";
 
-      // TODO: 산책 방 생성 API
-      console.log("산책 방 생성 payload:", payload);
+      if (!title || !startAt || Number.isNaN(pathId)) {
+        console.error("산책 방 생성에 필요한 값이 없습니다.", {
+          title,
+          startAt,
+          pathId,
+        });
+        return;
+      }
 
-      // API 연결이 아직 되지 않았기에 성공했다고 가정하고, 성공 페이지로 이동
-      navigate("/createwalk/success", { replace: true });
+      setIsSubmitting(true);
+      try {
+        await createWalkRoom({
+          title,
+          pathId,
+          missionName,
+          startAt,
+        });
+        navigate("/createwalk/success", { replace: true });
+      } catch (error) {
+        console.error("산책 방 생성 실패:", error);
+      } finally {
+        setIsSubmitting(false);
+      }
+
       return;
     }
 
@@ -74,12 +108,10 @@ const CreateWalkPage = () => {
               }
             />
           )}
-          ChooseCourseName={({ context, history }) => (
+          ChooseCourseName={({}) => (
             <ChooseCourseName
-              courseName={context.courseName}
-              onChangeCourseName={(courseName) =>
-                history.replace("ChooseCourseName", { ...context, courseName })
-              }
+              courseName={courseNameDraft}
+              onChangeCourseName={setCourseNameDraft}
             />
           )}
           ChooseDateTime={({ context, history }) => (
@@ -121,9 +153,13 @@ const CreateWalkPage = () => {
           <button
             className="flex-1 rounded-xl bg-sky-500 py-3 text-title-20-semibold  text-white disabled:bg-gray-300"
             onClick={handleNext}
-            disabled={!canGoNext}
+            disabled={!canGoNext || isSubmitting}
           >
-            {isLast ? "산책 방 만들기" : "다음 단계"}
+            {isLast
+              ? isSubmitting
+                ? "생성 중..."
+                : "산책 방 만들기"
+              : "다음 단계"}
           </button>
         </div>
       </footer>

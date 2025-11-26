@@ -1,9 +1,11 @@
 // 산책 생성에서 사용하는 전체 폼 상태
+export type MissionName = "NO_MISSION" | "PLOGGING" | "DELIVERY" | "PARK";
+
 export type CreateWalkFormState = {
   pathId?: string;
   courseName?: string;
   walkDateTime?: string;
-  subMission?: string;
+  subMission?: MissionName;
 };
 
 export type CreateWalkStep =

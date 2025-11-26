@@ -57,9 +57,7 @@ const ChooseDateTime = ({
   }, [selectedDate, selectedTime]);
 
   return (
-    <div
-      className="flex flex-col w-full h-full gap-6 overflow-y-auto"
-    >
+    <div className="flex flex-col w-full h-full gap-6 overflow-y-auto">
       <div className="flex items-center justify-start">
         <span className="flex text-title-22-semibold text-start">
           3. 산책 날짜와 시간을 정해주세요
@@ -71,7 +69,7 @@ const ChooseDateTime = ({
         <div className="flex flex-col gap-2 text-title-18-semibold text-black">
           <span>
             산책 날짜 :{" "}
-            <span className="text-black">
+            <span className="text-blue-400 text-title-18-semibold">
               {selectedDate
                 ? formatKoreanDate(selectedDate)
                 : "날짜를 골라주세요"}
@@ -79,7 +77,7 @@ const ChooseDateTime = ({
           </span>
           <span>
             산책 시간 :{" "}
-            <span className="text-black">
+            <span className="text-blue-400 text-title-18-semibold">
               {selectedTime
                 ? formatSelectedTime(selectedTime)
                 : "시간을 골라주세요"}
