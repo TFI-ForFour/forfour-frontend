@@ -108,7 +108,7 @@ const CreateWalkPage = () => {
               }
             />
           )}
-          ChooseCourseName={({}) => (
+          ChooseCourseName={() => (
             <ChooseCourseName
               courseName={courseNameDraft}
               onChangeCourseName={setCourseNameDraft}

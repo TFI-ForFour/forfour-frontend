@@ -1,13 +1,35 @@
 import { Check } from "lucide-react";
 
-const WalkingRoad = () => {
+type WalkingRoadProps = {
+  pathImageUrl?: string;
+  startMarketName?: string;
+  endMarketName?: string;
+};
+
+const WalkingRoad = ({
+  pathImageUrl,
+  startMarketName,
+  endMarketName,
+}: WalkingRoadProps) => {
   return (
     <div className="flex flex-col w-full gap-6">
       <div className="flex items-center justify-start">
         <span className="flex text-title-22-semibold">가야할 목적지</span>
       </div>
       {/* 산책 코스 사진이 들어올 자리 */}
-      <div className="flex w-full h-50 rounded-xl shadow-sm bg-gray-200" />
+      <div className="relative w-full h-50 rounded-xl shadow-sm bg-gray-200 overflow-hidden">
+        {pathImageUrl ? (
+          <img
+            src={pathImageUrl}
+            alt="산책 코스"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center text-gray-500">
+            코스 이미지가 없습니다
+          </div>
+        )}
+      </div>
 
       {/* 출발지 도착지가 들어오는 자리입니다. */}
       <div className="flex flex-col gap-4 justify-center">
@@ -20,7 +42,9 @@ const WalkingRoad = () => {
             <div className="flex items-center">
               <div className="flex gap-1 items-center">
                 <span className="text-title-22-semibold">출발 :</span>
-                <span className="text-title-22-semibold">사부작</span>
+                <span className="text-title-22-semibold">
+                  {startMarketName ?? "-"}
+                </span>
               </div>
             </div>
           </div>
@@ -38,7 +62,9 @@ const WalkingRoad = () => {
 
           <div className="flex gap-1 items-center">
             <span className="text-title-22-semibold">도착 :</span>
-            <span className="text-title-22-semibold">복지관</span>
+            <span className="text-title-22-semibold">
+              {endMarketName ?? "-"}
+            </span>
           </div>
         </div>
       </div>
