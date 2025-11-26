@@ -10,6 +10,7 @@ import CourseSuccess from "@/pages/createwalk/components/CourseSuccess";
 import DetailWalkPage from "@/pages/detailwalk/ui/DetailWalkPage";
 import WalkingPage from "@/pages/walking/ui/WalkingPage";
 import WalkingSuccessPage from "@/pages/walking/ui/WalkingSuccessPage";
+import LoginCallBackPage from "@/pages/login/ui/LoginCallBackPage";
 
 export const router = createBrowserRouter([
   {
@@ -47,6 +48,10 @@ export const router = createBrowserRouter([
   {
     path: "/",
     children: [
+      {
+        path: "/kakao/callback",
+        element: <LoginCallBackPage />,
+      },
       {
         path: "/createwalk/success",
         element: <CourseSuccess />,

@@ -1,9 +1,18 @@
 const KakaoLoginButton = () => {
+  const clientId = import.meta.env.VITE_KAKAO_REST_API_KEY;
+  const redirectUri = import.meta.env.VITE_KAKAO_REDIRECT_URL;
+  const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code`;
+
+  const handleClick = () => {
+    window.location.href = kakaoAuthUrl;
+  };
+
   return (
     <button
       type="button"
       className="w-full max-w-[320px] h-12 mx-auto bg-[#FEE500] rounded-xl flex justify-center items-center gap-2 active:opacity-90 px-2"
       aria-label="카카오 로그인"
+      onClick={handleClick}
     >
       <div className=" justify-center inline-flex items-center gap-2">
         <svg
