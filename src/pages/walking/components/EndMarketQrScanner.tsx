@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react"; // useEffect 제거 (카메라 초기화 로직 삭제됨)
+import { useCallback, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { QrReader } from "react-qr-reader";
 import type { OnResultFunction } from "react-qr-reader";
@@ -23,21 +23,36 @@ const EndMarketQrScanner = ({
   const [scanError, setScanError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [result, setResult] = useState<string | null>(null);
+  const [cameraReady, setCameraReady] = useState(false);
 
-  // preferredDeviceId, cameraError 등 수동 제어 로직 관련 상태 삭제
+  // iOS에서 카메라 권한 및 초기화 확인
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!cameraReady) {
+        setScanError("카메라를 불러오는 중입니다. 잠시만 기다려주세요.");
+      }
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [cameraReady]);
 
   const handleQrResult = useCallback<OnResultFunction>(
     (qrResult, qrError) => {
-      // 1. 에러가 있거나, 결과가 없거나, 이미 처리 중이면 무시
       if (qrError) {
+        // 카메라가 로드되면 ready 상태로 변경
+        if (!cameraReady) {
+          setCameraReady(true);
+          setScanError(null);
+        }
         return;
       }
+
       if (!qrResult || isProcessing) return;
 
       const processScan = async () => {
         try {
           setIsProcessing(true);
-          const text = qrResult.getText(); // 타입 안전성을 위해 getText() 사용 권장
+          const text = qrResult.getText();
           if (!text) {
             throw new Error("QR 내용이 비어 있습니다.");
           }
@@ -61,7 +76,7 @@ const EndMarketQrScanner = ({
 
       void processScan();
     },
-    [isProcessing, navigate, onSuccess, roomId]
+    [isProcessing, navigate, onSuccess, roomId, cameraReady]
   );
 
   return (
@@ -81,23 +96,53 @@ const EndMarketQrScanner = ({
         </div>
 
         <div className="relative w-full overflow-hidden rounded-xl bg-black aspect-[3/4]">
+          {/* iOS Safari 호환성을 위한 수정된 설정 */}
           <QrReader
-            // 핵심 수정: iOS 호환성을 위해 복잡한 설정 제거 후 표준 설정 사용
-            constraints={{ facingMode: "environment" }}
+            constraints={{
+              facingMode: "environment",
+              // iOS에서 더 나은 호환성을 위한 추가 설정
+              aspectRatio: { ideal: 1 },
+              width: { ideal: 1920 },
+              height: { ideal: 1080 },
+            }}
             onResult={handleQrResult}
             videoStyle={{
               width: "100%",
               height: "100%",
               objectFit: "cover",
+              // iOS에서 비디오가 보이도록 명시적 스타일
+              display: "block",
+              position: "absolute",
+              top: 0,
+              left: 0,
             }}
             containerStyle={{
               width: "100%",
               height: "100%",
+              position: "relative",
             }}
-            // 기본 붉은색 가이드 숨김 (커스텀 테두리를 사용 중이므로)
+            videoId="qr-video"
+            scanDelay={300}
             ViewFinder={() => null}
           />
+
+          {/* 스캔 가이드 테두리 */}
           <div className="pointer-events-none absolute inset-0 border-2 border-white/70" />
+
+          {/* 중앙 가이드 박스 (선택사항) */}
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+            <div className="h-64 w-64 border-4 border-white/90 rounded-xl shadow-lg" />
+          </div>
+
+          {/* 카메라 로딩 중 표시 */}
+          {!cameraReady && !scanError && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+              <div className="text-white text-center">
+                <div className="mb-2">📷</div>
+                <p className="text-sm">카메라 로딩 중...</p>
+              </div>
+            </div>
+          )}
         </div>
 
         {isProcessing && (
@@ -115,6 +160,11 @@ const EndMarketQrScanner = ({
             {scanError}
           </div>
         )}
+
+        {/* iOS 사용자를 위한 추가 안내 */}
+        <p className="text-xs text-gray-400 text-center">
+          카메라가 보이지 않으면 브라우저의 카메라 권한을 확인해주세요
+        </p>
       </div>
     </div>
   );
