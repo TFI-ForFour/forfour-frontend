@@ -30,9 +30,7 @@ const WalkingPage = () => {
           setError("잘못된 방 정보입니다.");
           return;
         }
-        const { roomDetail: detail, participantList } = await fetchRoomDetail(
-          numericId
-        );
+        const { roomDetail: detail } = await fetchRoomDetail(numericId);
         setRoomDetail(detail);
       } catch (err) {
         console.error("산책 방 정보 불러오기 실패:", err);
