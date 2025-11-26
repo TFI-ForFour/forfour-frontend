@@ -1,5 +1,5 @@
-import axios, { type InternalAxiosRequestConfig } from "axios";
-import { useAuthStore } from "../store";
+import axios from "axios";
+import { createAuthHandlers } from "./authHandlers";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
 
@@ -27,38 +27,7 @@ export const setAuthToken = (token: string) => {
   externalClient.defaults.headers.common.Authorization = `Bearer ${token}`;
 };
 
-const withAuthHeader = (config: InternalAxiosRequestConfig) => {
-  const token = localStorage.getItem("accessToken");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-};
-
-// 공통 JWT 토큰 에러 핸들러
-const handleAuthError = (error: unknown) => {
-  if (!axios.isAxiosError<{ code?: string }>(error)) {
-    return Promise.reject(error);
-  }
-
-  const res = error.response;
-  const data = res?.data;
-
-  if (!res) return Promise.reject(error);
-
-  const isOnLoginPage = window.location.pathname.startsWith("/login");
-
-  if (res.status === 401 && data?.code === "ATH-010" && !isOnLoginPage) {
-    // 토큰 만료 시 accessToken 제거
-    localStorage.removeItem("accessToken");
-
-    useAuthStore.getState().clearProfile();
-
-    window.location.replace("/login");
-  }
-
-  return Promise.reject(error);
-};
+const { withAuthHeader, handleAuthError } = createAuthHandlers(apiClient);
 
 apiClient.interceptors.response.use(
   (response) => response,
