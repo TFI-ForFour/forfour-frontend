@@ -37,6 +37,7 @@ const WalkListContainer = () => {
           walkRooms.map((room) => (
             <WalkCard
               key={room.roomId}
+              roomId={room.roomId}
               title={room.title}
               startAt={formatWalkStartAt(room.startAt)}
               startMarketName={room.startMarketName}

@@ -23,6 +23,7 @@ const UserWalks = ({ walks }: UserWalksProps) => {
           walks.map((walk) => (
             <WalkCard
               key={walk.roomId}
+              roomId={walk.roomId}
               title={walk.title}
               startAt={formatWalkStartAt(walk.startAt)}
               startMarketName={walk.startMarketName}
