@@ -5,6 +5,8 @@ import { to12Hour } from "../utils/dateTime";
 type SelectTimeProps = {
   selectedTime: SelectedTime | null;
   onChange: (time: SelectedTime) => void;
+  selectedDate: Date | null;
+  now: Date;
 };
 
 const generateTimeSlots = (
@@ -38,7 +40,12 @@ const formatButtonLabel = (slot: TimeSlot) => {
   return `${hourLabel}:${minuteLabel}`;
 };
 
-const SelectTime = ({ selectedTime, onChange }: SelectTimeProps) => {
+const isSameDay = (a: Date, b: Date) =>
+  a.getFullYear() === b.getFullYear() &&
+  a.getMonth() === b.getMonth() &&
+  a.getDate() === b.getDate();
+
+const SelectTime = ({ selectedTime, onChange, selectedDate, now }: SelectTimeProps) => {
   const [activePeriod, setActivePeriod] = useState<Period>(
     selectedTime?.period ?? "am"
   );
@@ -51,6 +58,20 @@ const SelectTime = ({ selectedTime, onChange }: SelectTimeProps) => {
 
   const handleSelectTime = (slot: TimeSlot) => {
     onChange({ ...slot, period: activePeriod });
+  };
+
+  const isPastSlot = (slot: TimeSlot) => {
+    if (!selectedDate) return false;
+    const slotDate = new Date(
+      selectedDate.getFullYear(),
+      selectedDate.getMonth(),
+      selectedDate.getDate(),
+      slot.hour,
+      slot.minute,
+      0,
+      0
+    );
+    return isSameDay(selectedDate, now) && slotDate.getTime() < now.getTime();
   };
 
   const periodButtonClass = (isActive: boolean) =>
@@ -93,12 +114,16 @@ const SelectTime = ({ selectedTime, onChange }: SelectTimeProps) => {
             selectedTime?.period === activePeriod &&
             selectedTime.hour === slot.hour &&
             selectedTime.minute === slot.minute;
+          const disabled = isPastSlot(slot);
 
           return (
             <button
               key={`${slot.hour}-${slot.minute}`}
-              className={timeButtonClass(isActive)}
-              onClick={() => handleSelectTime(slot)}
+              className={`${timeButtonClass(isActive)} ${
+                disabled ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              onClick={() => !disabled && handleSelectTime(slot)}
+              disabled={disabled}
             >
               {formatButtonLabel(slot)}
             </button>

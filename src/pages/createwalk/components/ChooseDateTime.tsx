@@ -16,6 +16,7 @@ const ChooseDateTime = ({
   walkDateTime,
   onChangeWalkDateTime,
 }: ChooseDateTimeProps) => {
+  const [now] = useState(() => new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<SelectedTime | null>(null);
   const lastSyncedWalkDateTime = useRef<string | null>(walkDateTime ?? null);
@@ -88,8 +89,17 @@ const ChooseDateTime = ({
 
       <div className="flex flex-col w-full h-full gap-6 rounded-xl border border-gray-200 p-4 bg-white">
         <div className="flex flex-col gap-6">
-          <SelectDate selectedDate={selectedDate} onChange={setSelectedDate} />
-          <SelectTime selectedTime={selectedTime} onChange={setSelectedTime} />
+          <SelectDate
+            selectedDate={selectedDate}
+            onChange={setSelectedDate}
+            minDate={now}
+          />
+          <SelectTime
+            selectedTime={selectedTime}
+            onChange={setSelectedTime}
+            selectedDate={selectedDate}
+            now={now}
+          />
         </div>
       </div>
     </div>
