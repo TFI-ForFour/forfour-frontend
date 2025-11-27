@@ -16,6 +16,7 @@ const ChooseDateTime = ({
   walkDateTime,
   onChangeWalkDateTime,
 }: ChooseDateTimeProps) => {
+  const [now] = useState(() => new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<SelectedTime | null>(null);
   const lastSyncedWalkDateTime = useRef<string | null>(walkDateTime ?? null);
@@ -56,6 +57,34 @@ const ChooseDateTime = ({
     }
   }, [selectedDate, selectedTime]);
 
+  const isPastSelection = (date: Date, time: SelectedTime) => {
+    const slotDate = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+      time.hour,
+      time.minute,
+      0,
+      0
+    );
+    return slotDate.getTime() < now.getTime();
+  };
+
+  useEffect(() => {
+    if (!selectedDate || !selectedTime) return;
+    if (isPastSelection(selectedDate, selectedTime)) {
+      setSelectedTime(null);
+    }
+  }, [now, selectedDate, selectedTime]);
+
+  const handleTimeChange = (time: SelectedTime) => {
+    if (selectedDate && isPastSelection(selectedDate, time)) {
+      setSelectedTime(null);
+      return;
+    }
+    setSelectedTime(time);
+  };
+
   return (
     <div className="flex flex-col w-full h-full gap-6 overflow-y-auto">
       <div className="flex items-center justify-start">
@@ -88,8 +117,17 @@ const ChooseDateTime = ({
 
       <div className="flex flex-col w-full h-full gap-6 rounded-xl border border-gray-200 p-4 bg-white">
         <div className="flex flex-col gap-6">
-          <SelectDate selectedDate={selectedDate} onChange={setSelectedDate} />
-          <SelectTime selectedTime={selectedTime} onChange={setSelectedTime} />
+          <SelectDate
+            selectedDate={selectedDate}
+            onChange={setSelectedDate}
+            minDate={now}
+          />
+          <SelectTime
+            selectedTime={selectedTime}
+            onChange={handleTimeChange}
+            selectedDate={selectedDate}
+            now={now}
+          />
         </div>
       </div>
     </div>

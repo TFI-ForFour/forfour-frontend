@@ -3,18 +3,23 @@ import { useEffect, useRef, useState } from "react";
 type SelectDateProps = {
   selectedDate: Date | null;
   onChange: (date: Date) => void;
+  minDate: Date;
 };
 
 const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
 
-const SelectDate = ({ selectedDate, onChange }: SelectDateProps) => {
+const startOfDay = (date: Date) =>
+  new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
+
+const SelectDate = ({ selectedDate, onChange, minDate }: SelectDateProps) => {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [visibleMonth, setVisibleMonth] = useState(() => {
-    const today = new Date();
+    const today = startOfDay(minDate);
     return new Date(today.getFullYear(), today.getMonth(), 1);
   });
   const calendarRef = useRef<HTMLDivElement | null>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const minDay = startOfDay(minDate);
 
   const handleSelectDate = (day: number) => {
     const picked = new Date(
@@ -22,6 +27,9 @@ const SelectDate = ({ selectedDate, onChange }: SelectDateProps) => {
       visibleMonth.getMonth(),
       day
     );
+    if (startOfDay(picked).getTime() < minDay.getTime()) {
+      return;
+    }
     onChange(picked);
     setVisibleMonth(new Date(picked.getFullYear(), picked.getMonth(), 1));
     setIsCalendarOpen(false);
@@ -40,9 +48,13 @@ const SelectDate = ({ selectedDate, onChange }: SelectDateProps) => {
   ).getDay();
 
   const goToPreviousMonth = () => {
-    setVisibleMonth(
-      (prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1)
-    );
+    setVisibleMonth((prev) => {
+      const next = new Date(prev.getFullYear(), prev.getMonth() - 1, 1);
+      if (next.getTime() < new Date(minDay.getFullYear(), minDay.getMonth(), 1).getTime()) {
+        return prev;
+      }
+      return next;
+    });
   };
 
   const goToNextMonth = () => {
@@ -86,9 +98,17 @@ const SelectDate = ({ selectedDate, onChange }: SelectDateProps) => {
           <div className="absolute z-10 mt-2 w-full rounded-xl border border-gray-200 bg-white p-4 shadow-lg">
             <div className="flex items-center justify-between mb-4">
               <button
-                className="rounded-lg border border-gray-200 px-3 py-1 text-14-medium hover:border-blue-200"
+                className="rounded-lg border border-gray-200 px-3 py-1 text-14-medium hover:border-blue-200 disabled:opacity-40"
                 onClick={goToPreviousMonth}
                 aria-label="이전 달"
+                disabled={
+                  new Date(
+                    visibleMonth.getFullYear(),
+                    visibleMonth.getMonth() - 1,
+                    1
+                  ).getTime() <
+                  new Date(minDay.getFullYear(), minDay.getMonth(), 1).getTime()
+                }
               >
                 이전
               </button>
@@ -121,6 +141,14 @@ const SelectDate = ({ selectedDate, onChange }: SelectDateProps) => {
                   selectedDate.getFullYear() === visibleMonth.getFullYear() &&
                   selectedDate.getMonth() === visibleMonth.getMonth() &&
                   selectedDate.getDate() === day;
+                const isDisabled =
+                  startOfDay(
+                    new Date(
+                      visibleMonth.getFullYear(),
+                      visibleMonth.getMonth(),
+                      day
+                    )
+                  ).getTime() < minDay.getTime();
 
                 return (
                   <button
@@ -129,9 +157,12 @@ const SelectDate = ({ selectedDate, onChange }: SelectDateProps) => {
                       "flex h-10 items-center justify-center rounded-lg text-14-medium transition",
                       isSelected
                         ? "border-blue-500 bg-blue-50 text-blue-600"
-                        : "border-gray-200 bg-white text-gray-700 hover:border-blue-200",
+                        : isDisabled
+                          ? "border-gray-100 bg-gray-50 text-gray-400 cursor-not-allowed"
+                          : "border-gray-200 bg-white text-gray-700 hover:border-blue-200",
                     ].join(" ")}
                     onClick={() => handleSelectDate(day)}
+                    disabled={isDisabled}
                   >
                     {day}
                   </button>
