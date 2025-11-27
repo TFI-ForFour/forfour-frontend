@@ -25,6 +25,10 @@ const DetailWalkPage = () => {
   const [actionLoading, setActionLoading] = useState(false);
   const [showQrScanner, setShowQrScanner] = useState(false);
   const [joinLoading, setJoinLoading] = useState(false);
+  const alreadyJoined = useMemo(() => {
+    if (!authProfile?.memberId) return false;
+    return participants.some((p) => p.memberId === authProfile.memberId);
+  }, [authProfile?.memberId, participants]);
 
   const isLeader = useMemo(() => {
     if (!roomDetail || authProfile?.memberId === undefined) return false;
@@ -197,11 +201,12 @@ const DetailWalkPage = () => {
               !roomDetail ||
               isLoading ||
               joinLoading ||
-              roomDetail?.status !== "RECRUITING"
+              roomDetail?.status !== "RECRUITING" ||
+              alreadyJoined
             }
             onClick={handleJoin}
           >
-            참여하기
+            {alreadyJoined ? "이미 참여했습니다" : "참여하기"}
           </button>
         )}
       </footer>
