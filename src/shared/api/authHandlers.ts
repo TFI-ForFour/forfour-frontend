@@ -37,14 +37,12 @@ export const createAuthHandlers = (memberClient: AxiosInstance) => {
     try {
       const { data } = await memberClient.get<MemberResponse>("/member");
       const { id, nickname, totalWalkCount, totalDistance } = data.data;
-      useAuthStore
-        .getState()
-        .setProfile({
-          memberId: id,
-          nickName: nickname,
-          totalWalkCount,
-          totalDistance,
-        });
+      useAuthStore.getState().setProfile({
+        memberId: id,
+        nickName: nickname,
+        totalWalkCount,
+        totalDistance,
+      });
     } catch (error) {
       profileHydrated = false;
       console.error("사용자 정보를 불러오지 못했습니다.", error);
@@ -89,7 +87,7 @@ export const createAuthHandlers = (memberClient: AxiosInstance) => {
     participationChecked = true;
     try {
       const { data } = await memberClient.get<{
-        data: { hasActiveRoom: boolean; roomId: number };
+        data: { hasActiveRoom: boolean; roomId?: number };
       }>("/my-participation");
 
       if (data.data.hasActiveRoom) {
@@ -104,5 +102,10 @@ export const createAuthHandlers = (memberClient: AxiosInstance) => {
     }
   };
 
-  return { withAuthHeader, handleAuthError, hydrateProfile, checkActiveParticipation };
+  return {
+    withAuthHeader,
+    handleAuthError,
+    hydrateProfile,
+    checkActiveParticipation,
+  };
 };
