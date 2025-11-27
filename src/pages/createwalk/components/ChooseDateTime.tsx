@@ -57,6 +57,34 @@ const ChooseDateTime = ({
     }
   }, [selectedDate, selectedTime]);
 
+  const isPastSelection = (date: Date, time: SelectedTime) => {
+    const slotDate = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+      time.hour,
+      time.minute,
+      0,
+      0
+    );
+    return slotDate.getTime() < now.getTime();
+  };
+
+  useEffect(() => {
+    if (!selectedDate || !selectedTime) return;
+    if (isPastSelection(selectedDate, selectedTime)) {
+      setSelectedTime(null);
+    }
+  }, [now, selectedDate, selectedTime]);
+
+  const handleTimeChange = (time: SelectedTime) => {
+    if (selectedDate && isPastSelection(selectedDate, time)) {
+      setSelectedTime(null);
+      return;
+    }
+    setSelectedTime(time);
+  };
+
   return (
     <div className="flex flex-col w-full h-full gap-6 overflow-y-auto">
       <div className="flex items-center justify-start">
@@ -96,7 +124,7 @@ const ChooseDateTime = ({
           />
           <SelectTime
             selectedTime={selectedTime}
-            onChange={setSelectedTime}
+            onChange={handleTimeChange}
             selectedDate={selectedDate}
             now={now}
           />
