@@ -13,8 +13,8 @@ const NickNameHeader = ({ onOpen, nickName }: NickNameHeaderProps) => {
           <User2 className="flex icon-m" />
         </div>
 
-        <div className="flex text-headline-24-bold items-center truncate">
-          {nickName}
+        <div className="flex min-w-0 flex-col text-headline-24-bold leading-snug">
+          <span className="line-clamp-2 break-all">{nickName}</span>
         </div>
       </div>
 

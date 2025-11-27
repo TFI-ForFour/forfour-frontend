@@ -1,6 +1,7 @@
 import { ChevronLeft, ChevronRight, LucideWandSparkles } from "lucide-react";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { fetchPathList, type PathListItem } from "../model/fetchPathList";
+import CourseImageModal from "./CourseImageModal";
 
 const DEFAULT_CONTAINER_HEIGHT = 340;
 
@@ -22,6 +23,7 @@ const ChooseCourse = ({ pathId, onChangePathId }: ChooseCourseProps) => {
     DEFAULT_CONTAINER_HEIGHT
   );
   const activeCardRef = useRef<HTMLDivElement | null>(null);
+  const [modalImage, setModalImage] = useState<string | null>(null);
 
   const currentCourse = useMemo(
     () => courses[currentIndex],
@@ -119,12 +121,19 @@ const ChooseCourse = ({ pathId, onChangePathId }: ChooseCourseProps) => {
               <div className="w-full px-1 py-2" ref={activeCardRef}>
                 <div className="flex w-full flex-col gap-3">
                   <div className="relative w-full h-[220px] overflow-hidden rounded-2xl aspect-16/10">
-                    <img
-                      src={currentCourse.pathImageUrl}
-                      alt={`${currentCourse.pathName} 경로 사진`}
-                      className="absolute inset-0 h-full w-full object-cover"
-                      loading="lazy"
-                    />
+                    <button
+                      type="button"
+                      className="absolute inset-0"
+                      onClick={() => setModalImage(currentCourse.pathImageUrl)}
+                      aria-label={`${currentCourse.pathName} 이미지 크게 보기`}
+                    >
+                      <img
+                        src={currentCourse.pathImageUrl}
+                        alt={`${currentCourse.pathName} 경로 사진`}
+                        className="absolute inset-0 h-full w-full object-cover"
+                        loading="lazy"
+                      />
+                    </button>
                   </div>
 
                   <div className="flex flex-col gap-2 px-1">
@@ -155,19 +164,36 @@ const ChooseCourse = ({ pathId, onChangePathId }: ChooseCourseProps) => {
                 코스를 불러오는 중...
               </div>
             )}
+          </div>
 
+          <div className="flex items-center justify-between gap-3 px-1">
             <button
               type="button"
-              className="absolute left-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow disabled:opacity-40"
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow disabled:opacity-40"
               onClick={() => handleSelect(currentIndex - 1)}
               disabled={currentIndex === 0 || courses.length === 0}
               aria-label="이전 코스 보기"
             >
               <ChevronLeft className="icon-m" />
             </button>
+
+            <div className="flex flex-1 items-center justify-center gap-2">
+              {courses.map((course, index) => (
+                <button
+                  key={course.pathId}
+                  type="button"
+                  onClick={() => handleSelect(index)}
+                  className={`h-2.5 w-2.5 rounded-full transition-colors ${
+                    currentIndex === index ? "bg-sky-500" : "bg-gray-300"
+                  }`}
+                  aria-label={`${course.pathName} 선택`}
+                />
+              ))}
+            </div>
+
             <button
               type="button"
-              className="absolute right-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow disabled:opacity-40"
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow disabled:opacity-40"
               onClick={() => handleSelect(currentIndex + 1)}
               disabled={
                 currentIndex === courses.length - 1 || courses.length === 0
@@ -177,22 +203,16 @@ const ChooseCourse = ({ pathId, onChangePathId }: ChooseCourseProps) => {
               <ChevronRight className="icon-m" />
             </button>
           </div>
-
-          <div className="flex items-center justify-center gap-2">
-            {courses.map((course, index) => (
-              <button
-                key={course.pathId}
-                type="button"
-                onClick={() => handleSelect(index)}
-                className={`h-2.5 w-2.5 rounded-full transition-colors ${
-                  currentIndex === index ? "bg-sky-500" : "bg-gray-300"
-                }`}
-                aria-label={`${course.pathName} 선택`}
-              />
-            ))}
-          </div>
         </div>
       </div>
+
+      {modalImage && currentCourse && (
+        <CourseImageModal
+          imageUrl={modalImage}
+          title={currentCourse.pathName}
+          onClose={() => setModalImage(null)}
+        />
+      )}
     </>
   );
 };

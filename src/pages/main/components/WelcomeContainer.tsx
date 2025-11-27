@@ -4,11 +4,9 @@ const WelcomeContainer = () => {
   const nickname = useAuthStore((state) => state.profile?.nickName);
 
   return (
-    <div className="flex flex-col w-full py-2 items-center text-center justify-center">
-      <div className="flex text-[34px] font-medium">{nickname}님,</div>
-      <div className="flex text-[30px] font-medium">
-        어떤 산책을 떠나볼까요?
-      </div>
+    <div className="flex flex-col w-full py-2 items-center text-center justify-center gap-1">
+      <div className="flex text-headline-28-bold">{nickname}님,</div>
+      <div className="flex text-title-24-semibold">어떤 산책을 떠나볼까요?</div>
     </div>
   );
 };
