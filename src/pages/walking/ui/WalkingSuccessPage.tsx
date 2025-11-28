@@ -46,7 +46,7 @@ const WalkingSuccessPage = () => {
   };
 
   return (
-    <div className="flex h-dvh flex-col bg-linear-to-b from-sky-50 to-white px-6 py-8">
+    <div className="flex h-dvh flex-col bg-linear-to-b from-sky-50 to-white px-6 py-8 pb-28">
       <header className="flex flex-col gap-3">
         <div className="text-center">
           <p className="text-title-24-semibold text-black">
@@ -105,14 +105,16 @@ const WalkingSuccessPage = () => {
         </div>
       </section>
 
-      <div className="mt-auto pt-6">
-        <button
-          className="w-full rounded-2xl bg-sky-500 py-4 text-title-20-semibold text-white shadow-lg shadow-sky-200 transition hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-200 focus:ring-offset-1 focus:ring-offset-white"
-          onClick={handleGoHome}
-        >
-          홈화면으로 이동
-        </button>
-      </div>
+      <footer className="fixed inset-x-0 bottom-0 z-20 flex justify-center bg-transparent px-6 pb-[calc(env(safe-area-inset-bottom,0px)+16px)]">
+        <div className="w-full max-w-[500px]">
+          <button
+            className="w-full rounded-2xl bg-sky-500 py-4 text-title-20-semibold text-white shadow-lg shadow-sky-200 transition hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-200 focus:ring-offset-1 focus:ring-offset-white"
+            onClick={handleGoHome}
+          >
+            홈화면으로 이동
+          </button>
+        </div>
+      </footer>
     </div>
   );
 };
