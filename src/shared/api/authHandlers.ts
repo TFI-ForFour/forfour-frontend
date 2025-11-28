@@ -69,7 +69,12 @@ export const createAuthHandlers = (memberClient: AxiosInstance) => {
 
     const isOnLoginPage = window.location.pathname.startsWith("/login");
 
-    if (res.status === 401 && data?.code === "ATH-010" && !isOnLoginPage) {
+    const shouldRedirectToLogin =
+      res.status === 401 &&
+      ["ATH-010", "ATH-003"].includes(data?.code ?? "") &&
+      !isOnLoginPage;
+
+    if (shouldRedirectToLogin) {
       localStorage.removeItem("accessToken");
       useAuthStore.getState().clearProfile();
       window.location.replace("/login");
