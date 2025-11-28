@@ -91,10 +91,7 @@ const MarketQrScanner = ({
           </button>
         </div>
 
-        <div
-          className="relative w-full rounded-xl bg-black"
-          style={{ height: "500px" }}
-        >
+        <div className="relative w-full overflow-hidden rounded-xl">
           {/* iOS Safari 호환성을 위한 수정된 설정 */}
           <QrReader
             constraints={{
@@ -108,13 +105,17 @@ const MarketQrScanner = ({
             videoStyle={{
               width: "100%",
               height: "100%",
-              objectFit: "contain",
+              objectFit: "cover",
               // iOS에서 비디오가 보이도록 명시적 스타일
               display: "block",
+              position: "absolute",
+              top: 0,
+              left: 0,
             }}
             containerStyle={{
               width: "100%",
               height: "100%",
+              position: "relative",
             }}
             videoId="qr-video-start"
             scanDelay={300}

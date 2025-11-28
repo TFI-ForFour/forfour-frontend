@@ -134,6 +134,44 @@ const ChooseCourse = ({ pathId, onChangePathId }: ChooseCourseProps) => {
                         loading="lazy"
                       />
                     </button>
+
+                    <div className="pointer-events-none absolute inset-0 flex items-center justify-between px-2">
+                      <button
+                        type="button"
+                        className="pointer-events-auto flex h-10 w-10 items-center justify-center rounded-full bg-black/35 text-white shadow-md backdrop-blur transition hover:bg-black/45 disabled:opacity-40 disabled:hover:bg-black/35"
+                        onClick={() => handleSelect(currentIndex - 1)}
+                        disabled={currentIndex === 0 || courses.length === 0}
+                        aria-label="이전 코스 보기"
+                      >
+                        <ChevronLeft className="icon-m" />
+                      </button>
+
+                      <button
+                        type="button"
+                        className="pointer-events-auto flex h-10 w-10 items-center justify-center rounded-full bg-black/35 text-white shadow-md backdrop-blur transition hover:bg-black/45 disabled:opacity-40 disabled:hover:bg-black/35"
+                        onClick={() => handleSelect(currentIndex + 1)}
+                        disabled={
+                          currentIndex === courses.length - 1 || courses.length === 0
+                        }
+                        aria-label="다음 코스 보기"
+                      >
+                        <ChevronRight className="icon-m" />
+                      </button>
+                    </div>
+
+                    <div className="pointer-events-none absolute inset-x-0 bottom-3 flex items-center justify-center gap-2">
+                      {courses.map((course, index) => (
+                        <button
+                          key={course.pathId}
+                          type="button"
+                          onClick={() => handleSelect(index)}
+                          className={`pointer-events-auto h-2.5 w-2.5 rounded-full transition-colors ${
+                            currentIndex === index ? "bg-white" : "bg-white/50"
+                          }`}
+                          aria-label={`${course.pathName} 선택`}
+                        />
+                      ))}
+                    </div>
                   </div>
 
                   <div className="flex flex-col gap-2 px-1">
@@ -166,43 +204,6 @@ const ChooseCourse = ({ pathId, onChangePathId }: ChooseCourseProps) => {
             )}
           </div>
 
-          <div className="flex items-center justify-between gap-3 px-1">
-            <button
-              type="button"
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow disabled:opacity-40"
-              onClick={() => handleSelect(currentIndex - 1)}
-              disabled={currentIndex === 0 || courses.length === 0}
-              aria-label="이전 코스 보기"
-            >
-              <ChevronLeft className="icon-m" />
-            </button>
-
-            <div className="flex flex-1 items-center justify-center gap-2">
-              {courses.map((course, index) => (
-                <button
-                  key={course.pathId}
-                  type="button"
-                  onClick={() => handleSelect(index)}
-                  className={`h-2.5 w-2.5 rounded-full transition-colors ${
-                    currentIndex === index ? "bg-sky-500" : "bg-gray-300"
-                  }`}
-                  aria-label={`${course.pathName} 선택`}
-                />
-              ))}
-            </div>
-
-            <button
-              type="button"
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow disabled:opacity-40"
-              onClick={() => handleSelect(currentIndex + 1)}
-              disabled={
-                currentIndex === courses.length - 1 || courses.length === 0
-              }
-              aria-label="다음 코스 보기"
-            >
-              <ChevronRight className="icon-m" />
-            </button>
-          </div>
         </div>
       </div>
 
