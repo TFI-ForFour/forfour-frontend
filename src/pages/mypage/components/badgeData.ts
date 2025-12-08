@@ -1,10 +1,11 @@
 import type { ComponentType, SVGProps } from "react";
-import { Crown, Goal } from "lucide-react";
-import WalkThreeKmBadge from "@/shared/assets/walk/walk_3km.svg?react";
-import WalkFiveKmBadge from "@/shared/assets/walk/walk_5km.svg?react";
+import WalkThreeKmBadge from "@/shared/assets/walk_count/badge_4.jpeg";
+import WalkFiveKmBadge from "@/shared/assets/walk_count/badge_5.jpeg";
 import WalkTenKmBadge from "@/shared/assets/walk/walk_10km.svg?react";
 import firstWalkCountBadge from "@/shared/assets/walk_count/badge_first.jpeg";
 import threeWalkCountBadge from "@/shared/assets/walk_count/badge_1.png";
+import fiveWalkCountBadge from "@/shared/assets/walk_count/badge_2.jpeg";
+import tenWalkCountBadge from "@/shared/assets/walk_count/badge_3.jpeg";
 
 export type BadgeMeta = {
   id: string;
@@ -21,7 +22,7 @@ export const distanceBadges: BadgeMeta[] = [
     id: "distance-3",
     label: "3KM 달성!",
     threshold: 3,
-    Icon: WalkThreeKmBadge,
+    imageUrl: WalkThreeKmBadge,
     bgColor: "bg-blue-200",
     iconColor: "text-blue-700",
   },
@@ -29,7 +30,7 @@ export const distanceBadges: BadgeMeta[] = [
     id: "distance-5",
     label: "5KM 달성!",
     threshold: 5,
-    Icon: WalkFiveKmBadge,
+    imageUrl: WalkFiveKmBadge,
     bgColor: "bg-green-200",
     iconColor: "text-green-700",
   },
@@ -62,7 +63,7 @@ export const walkCountBadges: BadgeMeta[] = [
     id: "walk-5",
     label: "5회 산책 달성!",
     threshold: 5,
-    Icon: Goal,
+    imageUrl: fiveWalkCountBadge,
     bgColor: "bg-orange-200",
     iconColor: "text-orange-700",
   },
@@ -70,7 +71,7 @@ export const walkCountBadges: BadgeMeta[] = [
     id: "walk-10",
     label: "10회 산책 달성!",
     threshold: 10,
-    Icon: Crown,
+    imageUrl: tenWalkCountBadge,
     bgColor: "bg-amber-200",
     iconColor: "text-amber-700",
   },
