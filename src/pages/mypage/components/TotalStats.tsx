@@ -20,7 +20,7 @@ const TotalStats = ({
           <div className="flex flex-col w-1/2 items-center justify-center gap-2">
             <span className="flex text-title-16-semibold">총 산책 거리</span>
             <span className="flex text-headline-28-bold">
-              {totalDistance}KM
+              {totalDistance.toFixed(1)}KM
             </span>
           </div>
 

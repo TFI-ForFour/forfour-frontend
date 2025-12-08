@@ -31,12 +31,16 @@ const CreateWalkPage = () => {
 
   const ctx = funnel.context as CreateWalkFormState;
   const [courseNameDraft, setCourseNameDraft] = useState(ctx.courseName ?? "");
+  const [maxParticipantsDraft, setMaxParticipantsDraft] = useState(
+    ctx.maxParticipants ?? 1
+  );
 
   useEffect(() => {
     if (currentStep === "ChooseCourseName") {
       setCourseNameDraft(ctx.courseName ?? "");
+      setMaxParticipantsDraft(ctx.maxParticipants ?? 1);
     }
-  }, [currentStep, ctx.courseName]);
+  }, [currentStep, ctx.courseName, ctx.maxParticipants]);
 
   const canGoNext =
     (currentStep === "ChooseCourse" && !!ctx.pathId) ||
@@ -54,7 +58,11 @@ const CreateWalkPage = () => {
 
     if (currentStep === "ChooseCourseName") {
       const nextStep = CREATE_WALK_STEPS[currentIndex + 1];
-      const nextContext = { ...ctx, courseName: courseNameDraft.trim() };
+      const nextContext = {
+        ...ctx,
+        courseName: courseNameDraft.trim(),
+        maxParticipants: maxParticipantsDraft,
+      };
       funnel.history.push(nextStep, nextContext);
       return;
     }
@@ -64,6 +72,7 @@ const CreateWalkPage = () => {
       const title = ctx.courseName;
       const startAt = ctx.walkDateTime;
       const missionName = ctx.subMission ?? "NO_MISSION";
+      const maxMemberCount = ctx.maxParticipants ?? 1;
 
       if (!title || !startAt || Number.isNaN(pathId)) {
         console.error("산책 방 생성에 필요한 값이 없습니다.", {
@@ -80,6 +89,7 @@ const CreateWalkPage = () => {
           title,
           pathId,
           missionName,
+          maxMemberCount,
           startAt,
         });
         navigate("/createwalk/success", { replace: true });
@@ -112,6 +122,8 @@ const CreateWalkPage = () => {
             <ChooseCourseName
               courseName={courseNameDraft}
               onChangeCourseName={setCourseNameDraft}
+              maxParticipants={maxParticipantsDraft}
+              onChangeMaxParticipants={setMaxParticipantsDraft}
             />
           )}
           ChooseDateTime={({ context, history }) => (

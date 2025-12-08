@@ -2,14 +2,33 @@ import type { ComponentType, SVGProps } from "react";
 
 type BadgeCardProps = {
   label: string;
-  Icon: ComponentType<SVGProps<SVGSVGElement>>;
+  Icon?: ComponentType<SVGProps<SVGSVGElement>>;
+  imageUrl?: string;
+  bgColor?: string;
+  iconColor?: string;
 };
 
-const BadgeCard = ({ label, Icon }: BadgeCardProps) => {
+const BadgeCard = ({
+  label,
+  Icon,
+  imageUrl,
+  bgColor = "bg-gray-300",
+  iconColor = "text-blue-700",
+}: BadgeCardProps) => {
   return (
-    <div className="flex flex-col gap-4 w-full rounded-xl border-2 border-gray-50 bg-gray-200 items-center justify-center p-4">
-      <div className="flex w-full h-[120px] bg-gray-300 rounded-full items-center justify-center pt-5 p-2">
-        <Icon className="flex text-blue-700" />
+    <div className="flex flex-col gap-4 w-full rounded-xl border-2 border-gray-50 bg-sky-50 items-center justify-center p-6">
+      <div
+        className={`flex w-full aspect-square ${bgColor} rounded-xl items-center justify-center overflow-hidden`}
+      >
+        {imageUrl ? (
+          <img
+            src={imageUrl}
+            alt={label}
+            className="w-full h-full object-contain"
+          />
+        ) : Icon ? (
+          <Icon className={`flex ${iconColor} w-24 h-24`} />
+        ) : null}
       </div>
 
       <div className="flex w-full items-center justify-center">

@@ -36,9 +36,18 @@ const MyBadge = ({ totalWalkCount = 0, totalDistance = 0 }: MyBadgeProps) => {
 
       {earnedBadges.length > 0 ? (
         <div className="grid grid-cols-2 w-full gap-4">
-          {earnedBadges.map(({ id, Icon, label }) => (
-            <BadgeCard key={id} Icon={Icon} label={label} />
-          ))}
+          {earnedBadges.map(
+            ({ id, Icon, label, imageUrl, bgColor, iconColor }) => (
+              <BadgeCard
+                key={id}
+                Icon={Icon}
+                label={label}
+                imageUrl={imageUrl}
+                bgColor={bgColor}
+                iconColor={iconColor}
+              />
+            )
+          )}
         </div>
       ) : (
         <div className="flex w-full rounded-xl border-2 border-gray-50 bg-gray-100 py-7 px-6 items-center justify-center">

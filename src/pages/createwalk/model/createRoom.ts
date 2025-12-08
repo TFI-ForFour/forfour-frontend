@@ -5,6 +5,7 @@ export type CreateWalkRoomRequest = {
   title: string;
   pathId: number;
   missionName: MissionName;
+  maxMemberCount: number;
   startAt: string;
 };
 

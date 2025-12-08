@@ -4,6 +4,7 @@ export type MissionName = "NO_MISSION" | "PLOGGING" | "DELIVERY" | "PARK";
 export type CreateWalkFormState = {
   pathId?: string;
   courseName?: string;
+  maxParticipants?: number;
   walkDateTime?: string;
   subMission?: MissionName;
 };
