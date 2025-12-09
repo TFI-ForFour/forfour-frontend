@@ -74,26 +74,26 @@
     모두가 함께 만들어가는 **커뮤니티 기반 산책 지도**가 형성될 수 있습니다.
 
 ## 설치 및 실행 방법 (Installation & Execution)
-**1.의존성 설치**
+**1. 의존성 설치**
 ```bash
 yarn install
 ```
-**2.Yarn SDK 의존성 추가**
+**2. Yarn SDK 의존성 추가**
 에디터 및 개발환경에서 자동 완성, 타입 지원 등을 원활하게 사용하기 위해 Yarn SDK를 설치합니다.
 ```bash
 yarn add @yarnpkg/sdks -D
 ```
-**3.VSCode용 Yarn SDK 설정**
+**3. VSCode용 Yarn SDK 설정**
 VSCode에서 Yarn PnP 환경을 잘 인식할 수 있도록 SDK를 설정합니다.
 ```bash
 yanr dlx @yarnpkg/sdks vscode
 ```
-**4.개발 서버 실행**
+**4. 개발 서버 실행**
 프로젝트를 로컬에서 실행합니다.
 ```bash
 yarn dev
 ```
-**5.브라우저에서 접속**
+**5. 브라우저에서 접속**
 브라우저를 열고 아래와 같이 로컬 주소로 접속합니다.
 ```bash
 http://localhost:5173
