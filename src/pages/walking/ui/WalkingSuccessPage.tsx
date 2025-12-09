@@ -1,14 +1,17 @@
 import { Wand2 } from "lucide-react";
-import { useMemo } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import type { EndMarketResult } from "@/pages/detailwalk/model/startWalk";
 import { formatWalkStartAt } from "@/pages/main/model/walkcard";
 import type { MissionName } from "@/pages/createwalk/types/walkFunnel";
 import { walkCourse } from "@/pages/createwalk/utils/walkcourse";
+import { fetchRoomDetail, type RoomDetail } from "@/pages/detailwalk/model/fetchRoomDetail";
 
 const WalkingSuccessPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { roomId } = useParams<{ roomId: string }>();
+  const [roomDetail, setRoomDetail] = useState<RoomDetail | null>(null);
   const endResult = (
     location.state as { endResult?: EndMarketResult } | undefined
   )?.endResult;
@@ -50,8 +53,40 @@ const WalkingSuccessPage = () => {
       return walkCourse.find((course) => course.pathId === numericPathId)?.pathImgUrl;
     }
 
+    if (roomDetail?.pathImageUrl) return roomDetail.pathImageUrl;
+
+    const fallbackPathId =
+      typeof roomDetail?.pathId === "string" ? Number(roomDetail.pathId) : roomDetail?.pathId;
+    if (fallbackPathId) {
+      return walkCourse.find((course) => course.pathId === fallbackPathId)?.pathImgUrl;
+    }
+
     return undefined;
-  }, [endResult?.roomDetail.pathId, endResult?.roomDetail.pathImageUrl]);
+  }, [
+    endResult?.roomDetail.pathId,
+    endResult?.roomDetail.pathImageUrl,
+    roomDetail?.pathId,
+    roomDetail?.pathImageUrl,
+  ]);
+
+  useEffect(() => {
+    const shouldFetchFallback =
+      !roomDetail && !endResult?.roomDetail.pathImageUrl && !!roomId;
+    if (!shouldFetchFallback) return;
+
+    const loadRoomDetail = async () => {
+      try {
+        const numericRoomId = Number(roomId);
+        if (Number.isNaN(numericRoomId)) return;
+        const { roomDetail: detail } = await fetchRoomDetail(numericRoomId);
+        setRoomDetail(detail);
+      } catch (error) {
+        console.error("산책 방 정보 불러오기 실패:", error);
+      }
+    };
+
+    void loadRoomDetail();
+  }, [endResult?.roomDetail.pathImageUrl, roomDetail, roomId]);
 
   const handleGoHome = () => {
     navigate("/", { replace: true });
