@@ -102,9 +102,9 @@ http://localhost:5173
 ## 팀 소개 (Team Instroduction)
 
 ### 팀원 (Team Members)
-- **이병준**: 팀장, 개발자(Frontend)
+- **이병준**: 팀장, 개발자(Frontend)<br/>
   🔗 Github: [oriNuguri25](https://github.com/oriNuguri25)
-- **송우석**: 팀원, 개발자(Backend)
+- **송우석**: 팀원, 개발자(Backend)<br/>
   🔗 Github: [koreaioi](https://github.com/koreaioi)
 - **최건희**: 팀원, 기획자
 - **최수빈**: 팀원, 기획자
