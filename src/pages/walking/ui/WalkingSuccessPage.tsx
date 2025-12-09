@@ -1,17 +1,13 @@
-import { Wand2 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { PartyPopper, Wand2 } from "lucide-react";
+import { useMemo } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import type { EndMarketResult } from "@/pages/detailwalk/model/startWalk";
 import { formatWalkStartAt } from "@/pages/main/model/walkcard";
 import type { MissionName } from "@/pages/createwalk/types/walkFunnel";
-import { walkCourse } from "@/pages/createwalk/utils/walkcourse";
-import { fetchRoomDetail, type RoomDetail } from "@/pages/detailwalk/model/fetchRoomDetail";
 
 const WalkingSuccessPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { roomId } = useParams<{ roomId: string }>();
-  const [roomDetail, setRoomDetail] = useState<RoomDetail | null>(null);
   const endResult = (
     location.state as { endResult?: EndMarketResult } | undefined
   )?.endResult;
@@ -41,52 +37,6 @@ const WalkingSuccessPage = () => {
     ? missionLabels[endResult.roomDetail.missionName as MissionName] ??
       endResult.roomDetail.missionName
     : "미션 정보 없음";
-  const pathImageUrl = useMemo(() => {
-    if (endResult?.roomDetail.pathImageUrl) return endResult.roomDetail.pathImageUrl;
-
-    const numericPathId =
-      typeof endResult?.roomDetail.pathId === "string"
-        ? Number(endResult.roomDetail.pathId)
-        : endResult?.roomDetail.pathId;
-
-    if (numericPathId) {
-      return walkCourse.find((course) => course.pathId === numericPathId)?.pathImgUrl;
-    }
-
-    if (roomDetail?.pathImageUrl) return roomDetail.pathImageUrl;
-
-    const fallbackPathId =
-      typeof roomDetail?.pathId === "string" ? Number(roomDetail.pathId) : roomDetail?.pathId;
-    if (fallbackPathId) {
-      return walkCourse.find((course) => course.pathId === fallbackPathId)?.pathImgUrl;
-    }
-
-    return undefined;
-  }, [
-    endResult?.roomDetail.pathId,
-    endResult?.roomDetail.pathImageUrl,
-    roomDetail?.pathId,
-    roomDetail?.pathImageUrl,
-  ]);
-
-  useEffect(() => {
-    const shouldFetchFallback =
-      !roomDetail && !endResult?.roomDetail.pathImageUrl && !!roomId;
-    if (!shouldFetchFallback) return;
-
-    const loadRoomDetail = async () => {
-      try {
-        const numericRoomId = Number(roomId);
-        if (Number.isNaN(numericRoomId)) return;
-        const { roomDetail: detail } = await fetchRoomDetail(numericRoomId);
-        setRoomDetail(detail);
-      } catch (error) {
-        console.error("산책 방 정보 불러오기 실패:", error);
-      }
-    };
-
-    void loadRoomDetail();
-  }, [endResult?.roomDetail.pathImageUrl, roomDetail, roomId]);
 
   const handleGoHome = () => {
     navigate("/", { replace: true });
@@ -137,17 +87,17 @@ const WalkingSuccessPage = () => {
           </p>
         </div>
 
-        <div className="rounded-2xl bg-white px-4 py-6 shadow-inner shadow-gray-200">
-          <div className="flex h-36 items-center justify-center rounded-xl bg-linear-to-b from-gray-50 to-gray-100 text-16-regular text-gray-500">
-            {pathImageUrl ? (
-              <img
-                src={pathImageUrl}
-                alt="산책 코스"
-                className="h-full w-full rounded-xl object-cover"
-              />
-            ) : (
-              "코스 사진"
-            )}
+        <div className="rounded-2xl bg-linear-to-r from-sky-500 via-sky-400 to-emerald-400 px-5 py-6 shadow-md shadow-sky-200/70">
+          <div className="flex items-start gap-3 text-white">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/15 shadow-inner shadow-sky-900/30">
+              <PartyPopper className="icon-l" />
+            </div>
+            <div className="flex flex-col gap-1">
+              <p className="text-title-20-semibold leading-tight">산책을 성공적으로 완료했어요!</p>
+              <p className="text-16-regular text-white/90">
+                함께 걸으며 보낸 시간만큼 몸도 마음도 한결 가벼워졌어요.
+              </p>
+            </div>
           </div>
         </div>
       </section>
