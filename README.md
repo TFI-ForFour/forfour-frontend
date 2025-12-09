@@ -111,7 +111,7 @@ http://localhost:5173
 - **이연서**: 팀원, 기획자
 
 ### 펠로우 및 멘토 (Fellow & Mentor)
-- **Fellow : 사부작 최경화 펠로우님** (Donghoon Kim @ The Promise): [Blog](https://blog.naver.com/sabujak2017)
+- **Fellow : 사부작 최경화 펠로우님**: [Blog](https://blog.naver.com/sabujak2017)
 - **Mentor : 카카오 김수진 멘토님** (zuri.pong @ Kakao)
 
 ## 개발 환경 (Development Environment)
