@@ -25,19 +25,31 @@ const WalkingSuccessPage = () => {
   }, [endResult?.roomDetail.startAt]);
 
   const distanceText = endResult ? `${endResult.distance.toFixed(1)}km` : "0km";
-  const minutesText = endResult
-    ? `${Math.floor(endResult.minutes / 60)}시간 ${endResult.minutes % 60}분`
-    : "0분";
+  const minutesText = useMemo(() => {
+    const totalMinutes = endResult?.minutes ?? 0;
+    if (totalMinutes < 60) return `${totalMinutes}분`;
+
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    if (minutes === 0) return `${hours}시간`;
+    return `${hours}시간 ${minutes}분`;
+  }, [endResult?.minutes]);
   const missionLabel = endResult?.roomDetail.missionName
     ? missionLabels[endResult.roomDetail.missionName as MissionName] ??
       endResult.roomDetail.missionName
     : "미션 정보 없음";
   const pathImageUrl = useMemo(() => {
     if (endResult?.roomDetail.pathImageUrl) return endResult.roomDetail.pathImageUrl;
-    if (endResult?.roomDetail.pathId) {
-      return walkCourse.find((course) => course.pathId === endResult.roomDetail.pathId)
-        ?.pathImgUrl;
+
+    const numericPathId =
+      typeof endResult?.roomDetail.pathId === "string"
+        ? Number(endResult.roomDetail.pathId)
+        : endResult?.roomDetail.pathId;
+
+    if (numericPathId) {
+      return walkCourse.find((course) => course.pathId === numericPathId)?.pathImgUrl;
     }
+
     return undefined;
   }, [endResult?.roomDetail.pathId, endResult?.roomDetail.pathImageUrl]);
 
