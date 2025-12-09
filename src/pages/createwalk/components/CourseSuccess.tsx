@@ -8,7 +8,7 @@ const CourseSuccess = () => {
   };
 
   return (
-    <div className="flex h-full flex-col items-center justify-between gap-10 bg-white p-6">
+    <div className="flex h-dvh flex-col items-center justify-between gap-10 bg-white p-6">
       <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center">
         <div className="flex items-center justify-center rounded-full bg-sky-50 px-4 py-2 text-title-20-semibold text-sky-600">
           성공!
