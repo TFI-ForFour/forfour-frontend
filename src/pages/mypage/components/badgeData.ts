@@ -3,8 +3,8 @@ import WalkThreeKmBadge from "@/shared/assets/walk_count/badge_4.jpeg";
 import WalkFiveKmBadge from "@/shared/assets/walk_count/badge_5.jpeg";
 import WalkTenKmBadge from "@/shared/assets/walk/walk_10km.svg?react";
 import firstWalkCountBadge from "@/shared/assets/walk_count/badge_first.jpeg";
-import threeWalkCountBadge from "@/shared/assets/walk_count/badge_1.png";
-import fiveWalkCountBadge from "@/shared/assets/walk_count/badge_2.jpeg";
+import fiveWalkCountBadge from "@/shared/assets/walk_count/badge_1.png";
+import threeWalkCountBadge from "@/shared/assets/walk_count/badge_2.jpeg";
 import tenWalkCountBadge from "@/shared/assets/walk_count/badge_3.jpeg";
 
 export type BadgeMeta = {
