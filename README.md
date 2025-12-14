@@ -132,4 +132,4 @@ http://localhost:5173
 - **Git Branching:** A pull request-based workflow.
 
 ## 연관 자료 (Related Resources)
-- [최종 발표 자료 링크 (Final Presentation Materials)](https://www.figma.com/slides/Hwml6sUaOU8AFqtlaMGxHO/%5B13%EC%A3%BC%EC%B0%A8%5D-Final-Presentation?node-id=1-540&t=zUOB05o0XEOy3HZw-1)
+- [최종 발표 자료 링크](https://drive.google.com/drive/folders/1PuVJCex5Cf0iAFZGq_hpqpAWUJAAXan2?usp=sharing)
