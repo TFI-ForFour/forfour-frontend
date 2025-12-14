@@ -102,17 +102,17 @@ http://localhost:5173
 ## 팀 소개 (Team Instroduction)
 
 ### 팀원 (Team Members)
-- **이병준**: 팀장, 개발자(Frontend)<br/>
+- **이병준**: 팀장, 개발(Frontend)<br/>
   🔗 Github: [oriNuguri25](https://github.com/oriNuguri25)
-- **송우석**: 팀원, 개발자(Backend)<br/>
+- **송우석**: 팀원, 개발(Backend)<br/>
   🔗 Github: [koreaioi](https://github.com/koreaioi)
-- **최건희**: 팀원, 기획자
-- **최수빈**: 팀원, 기획자
-- **이연서**: 팀원, 기획자
+- **최건희**: 팀원, 기획
+- **최수빈**: 팀원, 기획
+- **이연서**: 팀원, 기획
 
 ### 펠로우 및 멘토 (Fellow & Mentor)
 - **Fellow : 사부작 최경화 펠로우님**: [Blog](https://blog.naver.com/sabujak2017)
-- **Mentor : 카카오 김수진 멘토님** (zuri.pong @ Kakao)
+- **Mentor : 카카오 김수진 멘토님** (zuri.pong @Kakao)
 
 ## 개발 환경 (Development Environment)
 
